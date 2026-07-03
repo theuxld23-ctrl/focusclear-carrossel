@@ -97,21 +97,26 @@ class Personagem(Base):
     atualizado_em = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
-def _seed_pilares(db):
-    """Popula a tabela pilares a partir de engine/data/pilares.json (fonte de verdade).
+# Workspaces semeados no boot. "demo" é o workspace de teste do isolamento
+# multi-workspace (Fase 6): dados dele nunca aparecem no "focusclear" e vice-versa.
+_WORKSPACES_SEED = [("focusclear", "FocusClear"), ("demo", "Demo")]
+
+
+def _seed_pilares(db, workspace_id: str):
+    """Popula os pilares de UM workspace a partir de engine/data/pilares.json.
 
     Guarda o slug do pilar em config['chave'] (a tabela usa id autoincrement).
-    futebol=ativo; novela_reality/musica_popular/datas_sazonais=planejado.
+    futebol=ativo; cultura_pop/musica_popular/datas_sazonais=planejado.
     """
     import json
     from config import DATA
 
-    if db.query(Pilar).filter_by(workspace_id="focusclear").first():
+    if db.query(Pilar).filter_by(workspace_id=workspace_id).first():
         return
     data = json.loads((DATA / "pilares.json").read_text(encoding="utf-8"))
     for chave, p in data.get("pilares", {}).items():
         db.add(Pilar(
-            workspace_id="focusclear",
+            workspace_id=workspace_id,
             nome=p.get("nome", chave),
             status=p.get("status", "planejado"),
             config={
@@ -130,8 +135,9 @@ def _seed_pilares(db):
 def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    if not db.query(Workspace).filter_by(id="focusclear").first():
-        db.add(Workspace(id="focusclear", nome="FocusClear"))
-        db.commit()
-    _seed_pilares(db)
+    for ws_id, ws_nome in _WORKSPACES_SEED:
+        if not db.query(Workspace).filter_by(id=ws_id).first():
+            db.add(Workspace(id=ws_id, nome=ws_nome))
+            db.commit()
+        _seed_pilares(db, ws_id)
     db.close()

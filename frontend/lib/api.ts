@@ -1,5 +1,7 @@
 // Cliente da API local (FastAPI em :8010, acessado via rewrite /api -> backend).
 
+import { getWorkspace, comWorkspace } from './workspace'
+
 const BASE = '/api'
 
 export type JobStatus = 'pendente' | 'rodando' | 'concluido' | 'erro'
@@ -61,7 +63,7 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
 export function criarJob(input: CriarJobInput) {
   return req<{ job_id: string; status: JobStatus }>('/jobs', {
     method: 'POST',
-    body: JSON.stringify({ workspace_id: 'focusclear', ...input }),
+    body: JSON.stringify({ workspace_id: getWorkspace(), ...input }),
   })
 }
 
@@ -70,11 +72,11 @@ export function getJob(id: string) {
 }
 
 export function listarJobs() {
-  return req<Job[]>('/jobs')
+  return req<Job[]>(comWorkspace('/jobs'))
 }
 
 export function listarAssets() {
-  return req<Asset[]>('/assets')
+  return req<Asset[]>(comWorkspace('/assets'))
 }
 
 export function atualizarStatusAsset(id: string, status: AssetStatus) {
@@ -99,7 +101,7 @@ export interface Pilar {
 }
 
 export function listarPilares() {
-  return req<Pilar[]>('/pilares')
+  return req<Pilar[]>(comWorkspace('/pilares'))
 }
 
 export function atualizarPilar(
@@ -123,7 +125,7 @@ export interface Tendencia {
 }
 
 export function listarTendencias() {
-  return req<Tendencia[]>('/tendencias')
+  return req<Tendencia[]>(comWorkspace('/tendencias'))
 }
 
 // ── Personagem ───────────────────────────────────────────────────────────
@@ -138,7 +140,7 @@ export interface Personagem {
 }
 
 export function getPersonagem() {
-  return req<Personagem>('/personagem')
+  return req<Personagem>(comWorkspace('/personagem'))
 }
 
 export function salvarPersonagem(body: {
@@ -147,18 +149,25 @@ export function salvarPersonagem(body: {
   tom_de_voz: string
   voice_id?: string
 }) {
-  return req<Personagem>('/personagem', { method: 'PUT', body: JSON.stringify(body) })
+  return req<Personagem>(comWorkspace('/personagem'), {
+    method: 'PUT',
+    body: JSON.stringify(body),
+  })
 }
 
 export function fotoPersonagemUrl(bust?: number): string {
-  return `${BASE}/personagem/foto${bust ? `?t=${bust}` : ''}`
+  const q = comWorkspace('/personagem/foto') // já injeta ?workspace_id=
+  return `${BASE}${bust ? `${q}&t=${bust}` : q}`
 }
 
 export async function uploadFotoPersonagem(file: File) {
   const form = new FormData()
   form.append('file', file)
   // sem Content-Type manual: o browser define o boundary do multipart
-  const res = await fetch(`${BASE}/personagem/foto`, { method: 'POST', body: form })
+  const res = await fetch(`${BASE}${comWorkspace('/personagem/foto')}`, {
+    method: 'POST',
+    body: form,
+  })
   if (!res.ok) throw new Error(`${res.status} — upload falhou`)
   return res.json() as Promise<{ ok: boolean; foto_ref: string }>
 }
@@ -179,6 +188,19 @@ export interface Integracao {
 export function listarIntegracoes() {
   return req<{ integracoes: Integracao[] }>('/config')
 }
+
+// ── Workspaces ───────────────────────────────────────────────────────────
+export interface Workspace {
+  id: string
+  nome: string
+  criado_em: string
+}
+
+export function listarWorkspaces() {
+  return req<Workspace[]>('/workspaces')
+}
+
+export { getWorkspace, setWorkspace } from './workspace'
 
 // Validação ao vivo das chaves preenchidas (chama os serviços reais, read-only).
 export function validarIntegracoes() {

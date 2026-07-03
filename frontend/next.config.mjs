@@ -22,6 +22,7 @@ const nextConfig = {
       { source: '/api/personagem/foto', destination: `${b}/personagem/foto` },
       { source: '/api/config', destination: `${b}/config/` },
       { source: '/api/config/validar', destination: `${b}/config/validar` },
+      { source: '/api/workspaces', destination: `${b}/workspaces/` },
       { source: '/api/health', destination: `${b}/health` },
     ]
   },

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   listarIntegracoes,
   validarIntegracoes,
+  getWorkspace,
   type Integracao,
   type IntegracaoStatus,
 } from '@/lib/api'
@@ -88,7 +89,8 @@ export default function ConfigPage() {
         <>
           <div className="card flex items-center justify-between px-5 py-4">
             <span className="font-body text-sm text-neutral-400">
-              workspace: <span className="text-neutral-200">focusclear</span>
+              workspace: <span className="text-neutral-200">{getWorkspace()}</span>
+              <span className="ml-2 text-neutral-600">· chaves do .env são globais</span>
             </span>
             <span className="font-display text-sm font-medium text-neutral-300">
               {configuradas}/{total} configuradas

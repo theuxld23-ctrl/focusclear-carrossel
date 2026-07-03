@@ -2,6 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import {
+  getWorkspace,
+  setWorkspace,
+  listarWorkspaces,
+  type Workspace,
+} from '@/lib/api'
 
 const tabs = [
   { href: '/criar', label: 'Criar' },
@@ -16,6 +23,15 @@ const tabs = [
 
 export default function Nav() {
   const pathname = usePathname()
+  const [workspaces, setWorkspaces] = useState<Workspace[]>([])
+  const [atual, setAtual] = useState('focusclear')
+
+  useEffect(() => {
+    setAtual(getWorkspace())
+    listarWorkspaces()
+      .then(setWorkspaces)
+      .catch(() => setWorkspaces([{ id: 'focusclear', nome: 'FocusClear', criado_em: '' }]))
+  }, [])
 
   return (
     <header className="sticky top-0 z-10 border-b border-carbon-600 bg-carbon-900/80 backdrop-blur-md">
@@ -48,9 +64,23 @@ export default function Nav() {
           })}
         </nav>
 
-        <span className="ml-auto hidden font-body text-xs text-neutral-600 sm:block">
-          workspace: focusclear
-        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="hidden font-body text-xs text-neutral-600 sm:block">workspace</span>
+          <select
+            value={atual}
+            onChange={(e) => setWorkspace(e.target.value)}
+            aria-label="workspace ativo"
+            className="rounded-lg border border-carbon-600 bg-carbon-900 px-2.5 py-1 font-display text-xs font-medium text-neutral-200 transition-colors hover:bg-carbon-700"
+          >
+            {(workspaces.length ? workspaces : [{ id: atual, nome: atual, criado_em: '' }]).map(
+              (w) => (
+                <option key={w.id} value={w.id}>
+                  {w.nome}
+                </option>
+              ),
+            )}
+          </select>
+        </div>
       </div>
     </header>
   )

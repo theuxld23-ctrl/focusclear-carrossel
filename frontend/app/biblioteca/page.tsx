@@ -10,7 +10,10 @@ import {
 import StatusBadge from '@/components/StatusBadge'
 import CarrosselPreview, { type SlidePreview } from '@/components/CarrosselPreview'
 import ReelPreview from '@/components/ReelPreview'
+import ExportMenu from '@/components/ExportMenu'
 import { dataHora } from '@/lib/format'
+
+const extDe = (cam?: string | null) => (cam?.split('.').pop() || 'bin').toLowerCase()
 
 // Fluxo de aprovação: cada status avança para o próximo com o mesmo PATCH.
 const PROXIMO: Partial<Record<AssetStatus, { proximo: AssetStatus; label: string }>> = {
@@ -221,7 +224,7 @@ export default function BibliotecaPage() {
                     <p>{dataHora(c.criado_em)}</p>
                   </div>
 
-                  <div className="mt-auto">
+                  <div className="mt-auto space-y-2">
                     {passo ? (
                       <button
                         onClick={() => avancarCarrossel(c)}
@@ -235,6 +238,11 @@ export default function BibliotecaPage() {
                         publicado ✓
                       </p>
                     )}
+                    <ExportMenu
+                      assetId={c.slides[0].id}
+                      ext={extDe(c.slides[0].caminho)}
+                      base={c.times.join('-') || 'carrossel'}
+                    />
                   </div>
                 </div>
               </div>
@@ -277,7 +285,7 @@ export default function BibliotecaPage() {
                     <p>{dataHora(c.criado_em)}</p>
                   </div>
 
-                  <div className="mt-auto">
+                  <div className="mt-auto space-y-2">
                     {passo ? (
                       <button
                         onClick={() => avancarCarrossel(c)}
@@ -291,6 +299,11 @@ export default function BibliotecaPage() {
                         publicado ✓
                       </p>
                     )}
+                    <ExportMenu
+                      assetId={c.slides[0].id}
+                      ext={extDe(c.slides[0].caminho)}
+                      base={c.times.join('-') || 'motion'}
+                    />
                   </div>
                 </div>
               </div>
@@ -333,7 +346,7 @@ export default function BibliotecaPage() {
                     <p>{dataHora(r.criado_em)}</p>
                   </div>
 
-                  <div className="mt-auto">
+                  <div className="mt-auto space-y-2">
                     {passo ? (
                       <button
                         onClick={() => avancarAsset(r)}
@@ -345,6 +358,11 @@ export default function BibliotecaPage() {
                     ) : (
                       <p className="text-center font-body text-xs text-neutral-600">publicado ✓</p>
                     )}
+                    <ExportMenu
+                      assetId={r.id}
+                      ext={extDe(r.caminho)}
+                      base={times.join('-') || 'reel'}
+                    />
                   </div>
                 </div>
               </div>
