@@ -17,6 +17,67 @@ from engine.nodes.roteirista import escrever_roteiro
 from engine.nodes.resolve_imagens import resolve_imagens
 from engine.nodes.compositor import compor
 from engine.nodes.telegram import notificar_telegram
+from engine.nodes.roteirista_video import escrever_roteiro_video
+from engine.nodes.voz import gerar_voz
+from engine.nodes.avatar import gerar_avatar
+from engine.nodes.reel_compositor import compor_reel
+
+
+def _salvar_assets_carrossel(db: Session, job: Job, state: dict):
+    """Um Asset tipo 'slide' por PNG gerado."""
+    for carrossel in state.get("carrosseis_prontos", []):
+        perfil = carrossel.get("_perfil")
+        jogo = carrossel.get("_jogo", {})
+        legenda = carrossel.get("legenda", "")
+        for slide in carrossel.get("slides", []):
+            caminho = slide.get("_png")
+            if not caminho:
+                continue
+            db.add(Asset(
+                id=str(uuid.uuid4()),
+                job_id=job.id,
+                workspace_id=job.workspace_id,
+                tipo="slide",
+                caminho=caminho,
+                status="rascunho",
+                metadados={
+                    "n": slide.get("n"),
+                    "funcao": slide.get("funcao"),
+                    "perfil": perfil,
+                    "times": jogo.get("times"),
+                    "fase_copa": state.get("fase_copa"),
+                    "legenda": legenda if slide.get("n") == 1 else "",
+                    "tipografico": slide.get("_tipografico", False),
+                },
+            ))
+
+
+def _salvar_assets_reel(db: Session, job: Job, state: dict):
+    """Um Asset tipo 'reel' por reel montado (vídeo ou poster placeholder)."""
+    for reel in state.get("reels_prontos", []):
+        caminho = reel.get("_caminho")
+        if not caminho:
+            continue
+        roteiro = reel.get("roteiro") or {}
+        db.add(Asset(
+            id=str(uuid.uuid4()),
+            job_id=job.id,
+            workspace_id=job.workspace_id,
+            tipo="reel",
+            caminho=caminho,
+            status="rascunho",
+            metadados={
+                "perfil": reel.get("_perfil"),
+                "times": (reel.get("_jogo") or {}).get("times"),
+                "fase_copa": state.get("fase_copa"),
+                "momento": reel.get("momento"),
+                "texto_completo": roteiro.get("texto_completo", ""),
+                "duracao_estimada_s": roteiro.get("duracao_estimada_s"),
+                "label_ia": roteiro.get("label_ia", "conteúdo gerado por IA"),
+                "placeholder": reel.get("_placeholder", True),
+                "poster": reel.get("_poster"),
+            },
+        ))
 
 
 def criar_job(db: Session, workspace_id: str, pilar: str, formato: str,
@@ -56,46 +117,29 @@ def executar_job(job_id: str):
             "erros": [],
         }
 
-        # Pipeline completo: pesquisa → coleta → seletor → roteirista → resolve → compositor
+        # Tronco comum: pesquisa → coleta_imagens → seletor
         if job.turno == "tarde":
             state = pesquisa_tarde(state)
         else:
             state = pesquisa_manha(state)
         state = coletar_imagens(state)
         state = selecionar(state)
-        state = escrever_roteiro(state)
-        state = resolve_imagens(state)
-        state = compor(state)
-        # Notificação Telegram (bônus): pula em silêncio se as chaves não existem
-        state = notificar_telegram(state)
 
-        # Um Asset tipo "slide" por PNG gerado
-        prontos = state.get("carrosseis_prontos", [])
-        for carrossel in prontos:
-            perfil = carrossel.get("_perfil")
-            jogo = carrossel.get("_jogo", {})
-            legenda = carrossel.get("legenda", "")
-            for slide in carrossel.get("slides", []):
-                caminho = slide.get("_png")
-                if not caminho:
-                    continue
-                db.add(Asset(
-                    id=str(uuid.uuid4()),
-                    job_id=job.id,
-                    workspace_id=job.workspace_id,
-                    tipo="slide",
-                    caminho=caminho,
-                    status="rascunho",
-                    metadados={
-                        "n": slide.get("n"),
-                        "funcao": slide.get("funcao"),
-                        "perfil": perfil,
-                        "times": jogo.get("times"),
-                        "fase_copa": state.get("fase_copa"),
-                        "legenda": legenda if slide.get("n") == 1 else "",
-                        "tipografico": slide.get("_tipografico", False),
-                    },
-                ))
+        if job.formato == "reel":
+            # Ramo REEL: roteirista_video → voz → avatar → reel_compositor
+            state = escrever_roteiro_video(state)
+            state = gerar_voz(state)
+            state = gerar_avatar(state)
+            state = compor_reel(state)
+            state = notificar_telegram(state)
+            _salvar_assets_reel(db, job, state)
+        else:
+            # Ramo CARROSSEL: roteirista → resolve_imagens → compositor
+            state = escrever_roteiro(state)
+            state = resolve_imagens(state)
+            state = compor(state)
+            state = notificar_telegram(state)
+            _salvar_assets_carrossel(db, job, state)
 
         job.status = "concluido"
         job.atualizado_em = datetime.utcnow()

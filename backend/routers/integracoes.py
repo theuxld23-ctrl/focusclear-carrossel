@@ -31,6 +31,10 @@ def _campos():
         ("Brave API Key", "BRAVE_API_KEY", config.BRAVE_API_KEY, "Pesquisa", True),
         ("Telegram Bot Token", "TELEGRAM_BOT_TOKEN", config.TELEGRAM_BOT_TOKEN, "Entrega", True),
         ("Telegram Chat ID", "TELEGRAM_CHAT_ID", config.TELEGRAM_CHAT_ID, "Entrega", True),
+        ("ElevenLabs API Key", "ELEVENLABS_API_KEY", config.ELEVENLABS_API_KEY, "Vídeo", True),
+        ("ElevenLabs Voice ID", "ELEVENLABS_VOICE_ID", config.ELEVENLABS_VOICE_ID, "Vídeo", False),
+        ("HeyGen API Key", "HEYGEN_API_KEY", config.HEYGEN_API_KEY, "Vídeo", True),
+        ("HeyGen Avatar ID", "HEYGEN_AVATAR_ID", config.HEYGEN_AVATAR_ID, "Vídeo", False),
     ]
 
 

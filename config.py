@@ -26,6 +26,13 @@ BRAVE_API_KEY = os.getenv("BRAVE_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "")
 
+# Vídeo/Reel (Fase 3) — voz e avatar. Vazios = nós de vídeo pulam com placeholder.
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY", "")
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "")
+HEYGEN_API_KEY = os.getenv("HEYGEN_API_KEY", "")
+HEYGEN_AVATAR_ID = os.getenv("HEYGEN_AVATAR_ID", "")
+PALMIER_MCP_URL = os.getenv("PALMIER_MCP_URL", "http://127.0.0.1:19789/mcp")
+
 
 def require_brave_key() -> str:
     """Retorna a BRAVE_API_KEY ou falha com mensagem clara se ausente.

@@ -9,6 +9,7 @@ import {
 } from '@/lib/api'
 import StatusBadge from '@/components/StatusBadge'
 import CarrosselPreview, { type SlidePreview } from '@/components/CarrosselPreview'
+import ReelPreview from '@/components/ReelPreview'
 import { dataHora } from '@/lib/format'
 
 // Fluxo de aprovação: cada status avança para o próximo com o mesmo PATCH.
@@ -34,9 +35,16 @@ const asStr = (v: unknown) => (typeof v === 'string' ? v : '')
 const asN = (v: unknown) => (typeof v === 'number' ? v : Number(v) || 0)
 const dirDe = (caminho: string) => caminho.replace(/\/[^/]*$/, '')
 
-function agrupar(assets: Asset[]): { carrosseis: Carrossel[]; legado: Asset[] } {
+function agrupar(assets: Asset[]): {
+  carrosseis: Carrossel[]
+  reels: Asset[]
+  legado: Asset[]
+} {
   const slides = assets.filter((a) => a.tipo === 'slide' && a.caminho)
-  const legado = assets.filter((a) => !(a.tipo === 'slide' && a.caminho))
+  const reels = assets.filter((a) => a.tipo === 'reel' && a.caminho)
+  const legado = assets.filter(
+    (a) => !((a.tipo === 'slide' || a.tipo === 'reel') && a.caminho),
+  )
 
   const mapa = new Map<string, Asset[]>()
   for (const a of slides) {
@@ -65,7 +73,8 @@ function agrupar(assets: Asset[]): { carrosseis: Carrossel[]; legado: Asset[] } 
     }
   })
   carrosseis.sort((a, b) => b.criado_em.localeCompare(a.criado_em))
-  return { carrosseis, legado }
+  reels.sort((a, b) => b.criado_em.localeCompare(a.criado_em))
+  return { carrosseis, reels, legado }
 }
 
 export default function BibliotecaPage() {
@@ -86,7 +95,7 @@ export default function BibliotecaPage() {
     carregar()
   }, [carregar])
 
-  const { carrosseis, legado } = useMemo(
+  const { carrosseis, reels, legado } = useMemo(
     () => agrupar(assets ?? []),
     [assets],
   )
@@ -109,7 +118,25 @@ export default function BibliotecaPage() {
     }
   }
 
-  const vazio = assets !== null && carrosseis.length === 0 && legado.length === 0
+  // Avança o status de um único asset (reel).
+  async function avancarAsset(a: Asset) {
+    const passo = PROXIMO[a.status]
+    if (!passo) return
+    setAtualizando(a.id)
+    try {
+      await atualizarStatusAsset(a.id, passo.proximo)
+      setAssets((prev) =>
+        prev ? prev.map((x) => (x.id === a.id ? { ...x, status: passo.proximo } : x)) : prev,
+      )
+    } catch (e) {
+      setErro((e as Error).message)
+    } finally {
+      setAtualizando(null)
+    }
+  }
+
+  const vazio =
+    assets !== null && carrosseis.length === 0 && reels.length === 0 && legado.length === 0
 
   return (
     <div className="space-y-8">
@@ -119,7 +146,7 @@ export default function BibliotecaPage() {
             Biblioteca
           </h1>
           <p className="mt-1 font-body text-sm text-neutral-500">
-            Carrosséis gerados pelo motor. Navegue os slides, revise e aprove.
+            Carrosséis e reels gerados pelo motor. Navegue, revise e aprove.
           </p>
         </div>
         <button
@@ -188,6 +215,60 @@ export default function BibliotecaPage() {
                       <p className="text-center font-body text-xs text-neutral-600">
                         publicado ✓
                       </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Reels — player de vídeo (webm/mp4) ou poster placeholder */}
+          {reels.map((r) => {
+            const passo = PROXIMO[r.status]
+            const times = Array.isArray(r.metadados.times) ? (r.metadados.times as string[]) : []
+            const placeholder = r.metadados.placeholder === true
+            return (
+              <div key={r.id} className="card flex flex-col overflow-hidden">
+                <div className="relative">
+                  <ReelPreview id={r.id} caminho={r.caminho} />
+                  <span className="pointer-events-none absolute left-2.5 top-2.5">
+                    <StatusBadge status={r.status} />
+                  </span>
+                  <span className="pointer-events-none absolute right-2.5 top-2.5 rounded-full bg-carbon-900/75 px-2 py-0.5 font-display text-[10px] uppercase tracking-wider text-electric backdrop-blur-sm">
+                    reel
+                  </span>
+                </div>
+
+                <div className="flex flex-1 flex-col gap-3 p-4">
+                  <div className="space-y-1 font-body text-xs text-neutral-500">
+                    {times.length === 2 && (
+                      <p className="text-neutral-300">
+                        {times[0]} <span className="text-neutral-600">x</span> {times[1]}
+                      </p>
+                    )}
+                    <p>
+                      {asStr(r.metadados.perfil) && (
+                        <span className="text-electric">{asStr(r.metadados.perfil)}</span>
+                      )}
+                      {typeof r.metadados.duracao_estimada_s === 'number' && (
+                        <span className="text-neutral-600"> · ~{r.metadados.duracao_estimada_s}s</span>
+                      )}
+                      {placeholder && <span className="text-amber-400/80"> · placeholder</span>}
+                    </p>
+                    <p>{dataHora(r.criado_em)}</p>
+                  </div>
+
+                  <div className="mt-auto">
+                    {passo ? (
+                      <button
+                        onClick={() => avancarAsset(r)}
+                        disabled={atualizando === r.id}
+                        className="w-full rounded-lg bg-electric/15 px-3 py-2 font-display text-sm font-semibold text-electric transition-colors hover:bg-electric/25 disabled:opacity-50"
+                      >
+                        {atualizando === r.id ? '…' : passo.label}
+                      </button>
+                    ) : (
+                      <p className="text-center font-body text-xs text-neutral-600">publicado ✓</p>
                     )}
                   </div>
                 </div>
