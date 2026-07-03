@@ -51,22 +51,41 @@ Sem ativar o venv, use o interpretador dele diretamente: `./venv/bin/python -m t
 
 ```bash
 python -m tests.test_data                        # valida dados (etapa 0) — inclui pilares.json
-python -m engine.run --turno manha               # momentos do dia anterior (pilar padrão: futebol)
-python -m engine.run --turno tarde               # momentos históricos
-python -m engine.run --turno manha --pilar futebol   # pilar explícito (default futebol se omitido)
-pytest tests/                                    # roda todos os testes
+python -m engine.run --dry-run                   # valida o plano/fiação do pipeline (NÃO chama APIs)
+python -m engine.run --turno manha               # dispara o pipeline (real; requer BRAVE + LLM no .env)
+python -m engine.run --turno tarde --formato reel
+python -m engine.run --pilar cultura_pop --formato motion
+pytest tests/                                    # roda todos os testes (30 funções, 9 suítes)
+# alternativa sem pytest: python -m tests.test_pipeline  (imprime "PIPELINE OK")
 playwright install chromium                      # setup do compositor (uma vez)
 ```
 
-> `--pilar` (spec da Etapa 6 / entrypoint, ainda não construído): o entrypoint carrega a entrada do pilar de `pilares.json` no início e injeta `pilar_ativo` + `pilar_config` no state. Default `futebol`. v1: só `futebol` funcional de ponta a ponta.
+> `engine/run.py` é o CLI real: cria um job e chama o MESMO `job_service.executar_job`
+> do backend/scheduler. `--pilar` (default `futebol`) injeta `pilar_ativo` + `pilar_config`
+> no state. v1: só `futebol` funcional de ponta a ponta.
 
-## Arquitetura (pipeline de 7 nós, LangGraph)
+## Arquitetura (pipeline de 7 nós — orquestração SEQUENCIAL em Python)
 ```
-cron 06h/13h → pesquisa → coleta_imagens → seletor(LLM) → roteirista(LLM) → resolve_imagens → compositor(Puppeteer) → telegram
+scheduler cron 06h/13h → pesquisa → coleta_imagens → seletor(LLM) → roteirista(LLM) → resolve_imagens → compositor(Playwright) → telegram
 ```
+- **Não é LangGraph.** A orquestração é Python sequencial em `backend/services/job_service.py`
+  (`executar_job` chama os nós em ordem e ramifica por `formato`: carrossel / reel / motion).
+  "LangGraph" no briefing é rótulo/meta futura, **não implementado** (ver "Pendências conhecidas").
 - Nós determinísticos: pesquisa, imagem, compositor, telegram. Só **seletor** e **roteirista** chamam LLM.
 - `manha`: momentos de ontem (newsjacking). `tarde`: 2 momentos históricos.
 - Fan-out no seletor: 1 execução → N carrosséis.
+
+## Serviço (portas) — como subir e onde acessar
+- **Backend** (FastAPI): `uvicorn backend.main:app --port 8010` → **http://localhost:8010** (docs em `/docs`).
+- **Frontend** (Next.js): `cd frontend && npm run dev` → **http://localhost:3010** (porta fixada em `frontend/package.json`: `next dev -p 3010`). **Acesse o painel em http://localhost:3010.**
+- Frontend fala com o backend via rewrite `/api/* → :8010` (`next.config.mjs`, rewrites explícitos).
+
+## Pendências conhecidas (honestas, não silenciosas)
+- **Reel não monta vídeo real:** `reel_compositor` sempre gera um **placeholder** (webm do poster via Chromium). Mesmo com HeyGen (avatar) + ElevenLabs (voz) gerando mídia, a costura final NÃO existe (Palmier MCP só é detectado, não usado; ffmpeg é hook comentado). `avatar.py` (HeyGen) é esboço não verificado contra a API real.
+- **Tabela `agenda`:** existe no schema mas o scheduler usa cron HARDCODED — nada lê/escreve a tabela (ver docstring de `Agenda` em `database.py`).
+- **/metricas:** placeholder estático (sem Instagram Graph API — é v2 no briefing).
+- **LangGraph:** não implementado (a orquestração é sequencial; ver acima).
+- **`competicoes_clubes.json`** (âncora pós-Copa): a criar.
 
 ## Camada de PILARES (multi-conteúdo)
 O sistema não é só futebol — "futebol" é UM pilar de vários. **O MOTOR (seletor→roteirista→cascata→compositor→telegram) é AGNÓSTICO:** processa "momentos com carga emocional" vindos de um pilar, sem saber o que é futebol. Adicionar um pilar novo = adicionar entrada em `pilares.json` + fonte de pesquisa, **SEM tocar em seletor/roteirista/compositor**.
@@ -78,7 +97,7 @@ O sistema não é só futebol — "futebol" é UM pilar de vários. **O MOTOR (s
 - Pesquisa: fontes confiáveis por pilar em `_FONTES_POR_PILAR` (v1 só futebol no caminho de produção); mesma lógica de consenso multi-fonte, só troca QUAIS fontes.
 
 ## Princípios inegociáveis
-1. **Anti-alucinação = prioridade máxima.** Fatos de futebol SEMPRE de pesquisa (Brave/SofaScore), NUNCA da memória do LLM. Validação factual roda em CÓDIGO antes do LLM (dupla camada): todo time tem que estar em `selecoes_classificadas.json`, senão descarta.
+1. **Anti-alucinação = prioridade máxima.** Fatos de futebol SEMPRE da pesquisa (Brave — fonte única; SofaScore/FotMob bloqueiam o IP), NUNCA da memória do LLM. Validação factual roda em CÓDIGO antes do LLM (dupla camada): todo time tem que estar em `selecoes_classificadas.json`, senão descarta.
 2. **Lei anti-genérico.** Qualidade > volume. 1 carrossel forte > 3 mornos.
 3. **LLM plugável.** SEMPRE via `config.get_llm()`. NUNCA hardcode Groq/Claude.
 4. **Ético.** Perfil `trauma` → flag `requer_revisao_medica` + aviso no Telegram. Zero jargão clínico. Linguagem da experiência ("o que você sente"), nunca da condição ("você tem X").
@@ -90,13 +109,16 @@ config.py          # chaves + get_llm() plugável
 state.py           # CarrosselState (TypedDict)
 venv/              # virtualenv (gitignored)
 engine/
-  nodes/           # 1 arquivo por nó (pesquisa, imagem, seletor, roteirista, compositor, telegram)
+  nodes/           # 1 arquivo por nó (13: pesquisa, coleta_imagens, seletor, roteirista,
+                   #   resolve_imagens, compositor, telegram, roteirista_video, voz, avatar,
+                   #   reel_compositor, motion_compositor, coletor_tendencias)
   data/            # JSONs e prompts — FONTE DE VERDADE, não alterar
-  templates/       # slide.html (compositor)
-  output/          # PNGs (gitignored)
-  graph.py         # monta o LangGraph
-  run.py           # entrypoint --turno
-tests/             # 1 teste por etapa
+  templates/fonts/ # woff2 base64 embutidas (NÃO há slide.html — o HTML é gerado por compositor.build_html)
+  output/          # PNGs/webm (gitignored)
+  run.py           # CLI real (--turno/--pilar/--formato/--dry-run) → chama job_service.executar_job
+backend/           # FastAPI: main, database, scheduler, seed_demo, routers/, services/job_service
+                   #   (a orquestração do pipeline vive em services/job_service.py — não há engine/graph.py)
+tests/             # 1 teste por etapa/feature (9 suítes; rodam via pytest ou como módulo)
 ```
 
 ## Dados (engine/data/ — fonte de verdade validada, NÃO inventar)
@@ -112,7 +134,7 @@ tests/             # 1 teste por etapa
 ## O carrossel (8 slides, jornada escuro→luz)
 1 GANCHO (futebol, escuro) · 2 DADO/NÚMERO (escuro, estatística salvável) · 3 ESPELHO (escuro, nomeia a dor) · 4 PARTICIPAÇÃO (transição, enquete 3 opções) · 5 VIRADA (futebol→mente, a luz entra) · 6 PROVA (luz, reconhecimento/superação) · 7 ALÍVIO (luz quente, "isso tem nome" + micro-CTA salvar) · 8 CTA (luz quente, "siga @focusclear"). A jornada escuro→luz e o método espelho emocional são inalterados — só a contagem de funções mudou (6→8). Se o material não render 8 fortes, o roteirista cai pra 6 e declara em `formato_usado` (melhor 6 fortes que 8 fracos).
 
-**Canvas 4:5 — 1080×1350** (era 1:1 1080×1080; ocupa ~35% mais tela no feed). **Safe-zone central obrigatória:** texto crítico e foco visual ficam dentro do quadrado central 1080×1080 (offset de 135px no topo e 135px na base). No grid do perfil o 4:5 é cortado pra o 1080×1080 central — o que ficar nos 135px de topo/base some no grid; esses 135px servem só pra respiro visual / extensão de foto, nunca pra texto essencial. Quando a Etapa 5 (compositor) for construída, `slide.html` nasce em 1080×1350 com a safe-zone. Tipografia Big Shoulders Display (display) + Young Serif (virada). Paleta: brasa-noite #0D0B0F, refletor #F2EBDD, brasa #FF5436, pele #E3A87C.
+**Canvas 4:5 — 1080×1350** (era 1:1 1080×1080; ocupa ~35% mais tela no feed). **Safe-zone central obrigatória:** texto crítico e foco visual ficam dentro do quadrado central 1080×1080 (offset de 135px no topo e 135px na base). No grid do perfil o 4:5 é cortado pra o 1080×1080 central — o que ficar nos 135px de topo/base some no grid; esses 135px servem só pra respiro visual / extensão de foto, nunca pra texto essencial. O HTML do slide (1080×1350 com a safe-zone) é gerado em código por `compositor.build_html` (não há arquivo `slide.html`; só as fontes woff2 ficam em `engine/templates/fonts/`). Tipografia Big Shoulders Display (display) + Young Serif (virada). Paleta: brasa-noite #0D0B0F, refletor #F2EBDD, brasa #FF5436, pele #E3A87C.
 
 **Ajustes de algoritmo (Instagram 2026, no roteirista.md, custo zero):** slides 2 e 3 escritos standalone (o IG re-serve o carrossel a partir do slide 2 pra quem não engajou); open loop entre slides (gate = chegar ao slide 3, transição 2→3 é a mais valiosa); micro-CTA de salvar no slide 7 (save = sinal-rei, não substitui o "siga" do 8); legenda com palavra-chave temática na 1ª frase (SEO > hashtags em 2026).
 

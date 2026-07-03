@@ -91,8 +91,12 @@ python -m backend.seed_demo
 
 | O quê | Comando | Porta |
 |-------|---------|-------|
-| Backend | `uvicorn backend.main:app --port 8010` | 8010 |
-| Frontend | `cd frontend && npm run dev` | 3010 |
+| Backend (API) | `uvicorn backend.main:app --port 8010` | **http://localhost:8010** (docs em `/docs`) |
+| Frontend (painel) | `cd frontend && npm run dev` | **http://localhost:3010** ← acesse aqui |
 | Motor (CLI) | `python -m engine.run --turno manha --pilar futebol` | — |
+| Motor (dry-run) | `python -m engine.run --dry-run` (valida sem chamar APIs) | — |
+
+> Portas fixas: backend **8010**, frontend **3010** (`next dev -p 3010` no `package.json`).
+> O painel fica no **frontend (3010)**; ele fala com o backend (8010) via rewrite `/api/*`.
 
 Arquitetura e fluxo dos nós: veja **[ARQUITETURA.md](ARQUITETURA.md)**.

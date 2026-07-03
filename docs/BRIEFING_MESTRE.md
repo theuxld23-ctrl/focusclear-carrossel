@@ -36,7 +36,7 @@ MAC MINI M4 (tudo aqui)
   FRONTEND · Next.js 14 + Tailwind
     /criar │ /biblioteca │ /fila │ /tendencias │ /pilares │ /personagem │ /metricas │ /config
   BACKEND · FastAPI + SQLite
-    MOTOR (LangGraph): pesquisa → seletor → roteirista → [carrossel] [reel] [motion]
+    MOTOR (Python sequencial): pesquisa → seletor → roteirista → [carrossel] [reel] [motion]
     + APScheduler + coletor tendências + biblioteca assets
   PALMIER PRO (editor vídeo, MCP)
 Integrações: Brave · HeyGen · ElevenLabs · LLM (Groq/Anthropic) · Instagram Graph API (v2)
@@ -79,7 +79,7 @@ Adicionar pilar = entrada em `pilares.json` + fonte de pesquisa. Motor não muda
 
 ---
 
-## 6. MOTOR — 7 NÓS LANGGRAPH
+## 6. MOTOR — 7 NÓS (orquestração sequencial)
 
 ```
 UI/cron → pesquisa → coleta_imagens → seletor(LLM) → roteirista(LLM)
@@ -89,6 +89,12 @@ UI/cron → pesquisa → coleta_imagens → seletor(LLM) → roteirista(LLM)
                                  biblioteca → notifica(Telegram)
 ```
 Nós com LLM: seletor + roteirista. Custo: ~$6/mês (Sonnet 4.6).
+
+> **Reconciliação (jul/2026):** "LangGraph" foi o rótulo de projeto, mas a implementação
+> v1 é **Python sequencial** em `backend/services/job_service.py` (`executar_job` chama os
+> nós em ordem e ramifica por formato). LangGraph permanece como meta futura, **não
+> implementada**. O reel monta só um **placeholder** (a costura HeyGen+ElevenLabs+Palmier
+> ainda não existe). Ver "Pendências conhecidas" no CLAUDE.md.
 
 ---
 
@@ -115,7 +121,7 @@ workspace_id (org_id) desde o dia 1. SQLite → Postgres quando produto.
 ## 9. STACK
 
 Frontend: Next.js 14 + Tailwind · Backend: FastAPI + Python (3.12+; máquina roda 3.14)
-· BD: SQLite · Motor: LangGraph · LLM: Groq/Sonnet 4.6 (plugável via `get_llm()`) ·
+· BD: SQLite · Motor: Python sequencial (job_service; LangGraph = meta futura) · LLM: Groq/Sonnet 4.6 (plugável via `get_llm()`) ·
 Pesquisa: Brave · Avatar: HeyGen · Voz: ElevenLabs · Editor: Palmier Pro
 (MCP, POST http://127.0.0.1:19789/mcp) · Carrossel: Playwright · Agendamento:
 APScheduler · Notificação: Telegram Bot · Máquina: Mac Mini M4, macOS Tahoe.

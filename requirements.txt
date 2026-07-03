@@ -1,5 +1,4 @@
 python-dotenv
-langgraph
 groq
 anthropic
 requests
@@ -14,3 +13,6 @@ sqlalchemy>=2.0.0
 apscheduler>=3.10.0
 aiofiles>=23.0.0
 python-multipart>=0.0.9
+
+# Testes (suíte offline roda tanto como módulo quanto via pytest)
+pytest>=8.0.0

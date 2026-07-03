@@ -98,7 +98,7 @@ Não descarte um bom momento só por falta de foto de APOIO — só descarte se 
     {
       "momento": "descrição curta",
       "validacao_factual": "entidades confirmadas na âncora do pilar + data/período coerentes",
-      "fatos_confirmados": "fatos reais (fonte: SofaScore/Brave) que o roteirista usará como verdade",
+      "fatos_confirmados": "fatos reais (fonte: Brave, única do projeto) que o roteirista usará como verdade",
       "perfil": "ahsd",
       "razao_do_casamento": "por que espelha esse perfil (cite a pista de fase se usou)",
       "subgeracao_alvo": "z_ponte",

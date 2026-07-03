@@ -22,9 +22,14 @@ frontend/ (Next.js :3010)  ── /api/* rewrite ──▶  backend/ (FastAPI :8
   (orquestra o pipeline), `scheduler.py` (APScheduler), `database.py` (SQLite +
   SQLAlchemy, tudo com `workspace_id`).
 - **engine/** — o motor, agnóstico de backend. `nodes/` (1 arquivo por nó),
-  `data/` (JSONs = fonte de verdade, **não alterar**), `templates/` (HTML dos slides).
+  `data/` (JSONs = fonte de verdade, **não alterar**), `templates/fonts/` (só as fontes
+  woff2; o HTML do slide é gerado em código por `compositor.build_html`).
 
-## O pipeline (nós LangGraph)
+## O pipeline (orquestração sequencial em Python)
+
+> **Não é LangGraph.** Os nós são chamados em ordem por `backend/services/job_service.py`
+> (`executar_job`), que ramifica por formato. "LangGraph" no briefing é meta futura, não
+> implementada.
 
 ```
 pesquisa → coleta_imagens → seletor(LLM) → roteirista(LLM) → resolve_imagens → [saída] → telegram

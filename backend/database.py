@@ -76,6 +76,14 @@ class Tendencia(Base):
 
 
 class Agenda(Base):
+    """PENDÊNCIA CONHECIDA (não conectada). Schema previsto para agendamento
+    configurável por workspace, mas HOJE o `backend/scheduler.py` usa cron
+    HARDCODED (06h/13h + 05h tendências) — nada lê ou escreve esta tabela.
+
+    Conectar de verdade (scheduler lê estas linhas e registra os cron a partir de
+    `horario_cron`) exige seed de linhas + semântica de turno + uma UI de edição
+    = feature nova, fora do escopo de reconciliação. Mantida no schema como
+    fundação declarada; ver CLAUDE.md ("Pendências conhecidas")."""
     __tablename__ = "agenda"
     id = Column(Integer, primary_key=True, autoincrement=True)
     workspace_id = Column(String, nullable=False)
