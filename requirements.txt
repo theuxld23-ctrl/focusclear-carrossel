@@ -5,6 +5,7 @@ requests
 playwright
 pillow
 python-telegram-bot
+imageio-ffmpeg   # binário ffmpeg estático (montagem do reel) quando não há ffmpeg no PATH
 
 # Fase 1 — backend como serviço
 fastapi>=0.115.0
