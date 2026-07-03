@@ -23,6 +23,9 @@ const nextConfig = {
       { source: '/api/config', destination: `${b}/config/` },
       { source: '/api/config/validar', destination: `${b}/config/validar` },
       { source: '/api/workspaces', destination: `${b}/workspaces/` },
+      { source: '/api/agenda', destination: `${b}/agenda/` },
+      { source: '/api/agenda/:id', destination: `${b}/agenda/:id` },
+      { source: '/api/metricas', destination: `${b}/metricas/` },
       { source: '/api/health', destination: `${b}/health` },
     ]
   },

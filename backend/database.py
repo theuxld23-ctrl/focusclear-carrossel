@@ -3,7 +3,7 @@
 Todas as tabelas carregam `workspace_id` desde o início (fundação de produto
 multi-workspace). v1 opera com o workspace seed "focusclear".
 """
-from sqlalchemy import create_engine, Column, String, Integer, DateTime, JSON, Boolean, Text
+from sqlalchemy import create_engine, Column, String, Integer, Float, DateTime, JSON, Boolean, Text
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 import os
@@ -76,21 +76,41 @@ class Tendencia(Base):
 
 
 class Agenda(Base):
-    """PENDÊNCIA CONHECIDA (não conectada). Schema previsto para agendamento
-    configurável por workspace, mas HOJE o `backend/scheduler.py` usa cron
-    HARDCODED (06h/13h + 05h tendências) — nada lê ou escreve esta tabela.
+    """Agendamentos configuráveis por workspace — CONECTADA ao scheduler.
 
-    Conectar de verdade (scheduler lê estas linhas e registra os cron a partir de
-    `horario_cron`) exige seed de linhas + semântica de turno + uma UI de edição
-    = feature nova, fora do escopo de reconciliação. Mantida no schema como
-    fundação declarada; ver CLAUDE.md ("Pendências conhecidas")."""
+    `backend/scheduler.py` LÊ as linhas ativas desta tabela no boot e registra um
+    cron job por linha (a partir de `horario_cron`). Retrocompat: se a tabela
+    estiver VAZIA, o scheduler cai no comportamento hardcoded histórico
+    (futebol/carrossel 06h manhã + 13h tarde no workspace focusclear).
+    As regras hardcoded viram linhas via `_seed_agenda` no boot do focusclear.
+    CRUD em `routers/agenda.py`; a aba /fila gerencia estas linhas."""
     __tablename__ = "agenda"
     id = Column(Integer, primary_key=True, autoincrement=True)
     workspace_id = Column(String, nullable=False)
     pilar = Column(String, nullable=False)
-    formato = Column(String, nullable=False)
+    formato = Column(String, nullable=False)  # carrossel | reel | motion
+    turno = Column(String, nullable=True)  # manha | tarde (carrossel) — opcional
     horario_cron = Column(String, nullable=False)  # "0 6 * * *"
     ativo = Column(Boolean, default=True)
+    criado_em = Column(DateTime, default=datetime.utcnow)
+
+
+class Metrica(Base):
+    """Desempenho de um asset publicado — ESTRUTURA pronta para a Instagram Graph
+    API (v2). Hoje NADA popula esta tabela (sem Graph API conectada); o endpoint
+    `GET /metricas` devolve o que houver (vazio por enquanto) e a aba /metricas
+    mostra estado vazio claro. Quando a Graph API for ligada, um coletor insere
+    linhas aqui e a página passa a exibir os números reais, sem mudar a UI."""
+    __tablename__ = "metricas"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workspace_id = Column(String, nullable=False)
+    asset_id = Column(String, nullable=True)  # liga a um Asset publicado (opcional)
+    periodo = Column(String, nullable=True)  # ex "2026-07" ou data ISO
+    swipe_rate = Column(Float, nullable=True)  # % que passa do slide 1 (0-100)
+    saves = Column(Integer, nullable=True)  # salvamentos
+    shares = Column(Integer, nullable=True)  # compartilhamentos
+    completion = Column(Float, nullable=True)  # % que chega ao slide 8 (0-100)
+    coletado_em = Column(DateTime, default=datetime.utcnow)
 
 
 class Personagem(Base):
@@ -140,12 +160,58 @@ def _seed_pilares(db, workspace_id: str):
     db.commit()
 
 
+# Regras hardcoded históricas do scheduler, agora materializadas como linhas de
+# agenda no boot do focusclear (a fonte de verdade do agendamento passa a ser a
+# tabela). Só o focusclear é semeado; a tabela vazia = retrocompat no scheduler.
+_AGENDA_SEED_FOCUSCLEAR = [
+    {"pilar": "futebol", "formato": "carrossel", "turno": "manha", "horario_cron": "0 6 * * *"},
+    {"pilar": "futebol", "formato": "carrossel", "turno": "tarde", "horario_cron": "0 13 * * *"},
+]
+
+
+def _seed_agenda(db, workspace_id: str):
+    """Semeia a agenda do focusclear com as 2 regras antes hardcoded (06h/13h).
+
+    Idempotente: só insere se o workspace ainda não tem nenhuma linha de agenda.
+    Só o focusclear recebe seed (demo fica sem agendamentos)."""
+    if workspace_id != "focusclear":
+        return
+    if db.query(Agenda).filter_by(workspace_id=workspace_id).first():
+        return
+    for r in _AGENDA_SEED_FOCUSCLEAR:
+        db.add(Agenda(workspace_id=workspace_id, ativo=True, **r))
+    db.commit()
+
+
+def _migrar_sqlite(db):
+    """Migração leve p/ bancos de fases anteriores: adiciona colunas novas que o
+    `create_all` NÃO cria em tabelas já existentes (SQLite só faz ADD COLUMN).
+
+    Ex.: a tabela `agenda` de antes desta feature não tinha `turno`/`criado_em`.
+    Sem isso, um banco antigo quebraria ao consultar as colunas novas."""
+    from sqlalchemy import text
+
+    novas = {
+        "agenda": {"turno": "VARCHAR", "criado_em": "DATETIME"},
+    }
+    for tabela, cols in novas.items():
+        existentes = {r[1] for r in db.execute(text(f"PRAGMA table_info({tabela})"))}
+        if not existentes:
+            continue  # tabela nova → create_all já a criou completa
+        for col, tipo in cols.items():
+            if col not in existentes:
+                db.execute(text(f"ALTER TABLE {tabela} ADD COLUMN {col} {tipo}"))
+    db.commit()
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
+    _migrar_sqlite(db)
     for ws_id, ws_nome in _WORKSPACES_SEED:
         if not db.query(Workspace).filter_by(id=ws_id).first():
             db.add(Workspace(id=ws_id, nome=ws_nome))
             db.commit()
         _seed_pilares(db, ws_id)
+        _seed_agenda(db, ws_id)
     db.close()

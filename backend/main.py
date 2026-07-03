@@ -9,6 +9,7 @@ from backend.database import init_db
 from backend.scheduler import iniciar_scheduler, parar_scheduler
 from backend.routers import (
     jobs, assets, pilares, tendencias, personagem, integracoes, workspaces,
+    agenda, metricas,
 )
 
 
@@ -28,6 +29,8 @@ app.include_router(tendencias.router)
 app.include_router(personagem.router)
 app.include_router(integracoes.router)
 app.include_router(workspaces.router)
+app.include_router(agenda.router)
+app.include_router(metricas.router)
 
 
 @app.get("/health")

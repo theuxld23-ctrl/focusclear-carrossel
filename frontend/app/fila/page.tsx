@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { listarJobs, type Job } from '@/lib/api'
 import StatusBadge from '@/components/StatusBadge'
+import AgendaManager from '@/components/AgendaManager'
 import { tempoDecorrido } from '@/lib/format'
 
 export default function FilaPage() {
@@ -48,6 +49,14 @@ export default function FilaPage() {
           {erro}
         </p>
       )}
+
+      <AgendaManager />
+
+      <div className="border-t border-carbon-700 pt-2">
+        <h2 className="font-display text-lg font-bold tracking-tight text-neutral-100">
+          Jobs recentes
+        </h2>
+      </div>
 
       {jobs === null ? (
         <p className="font-body text-sm text-neutral-500">Carregando…</p>

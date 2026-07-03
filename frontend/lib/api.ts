@@ -128,6 +128,85 @@ export function listarTendencias() {
   return req<Tendencia[]>(comWorkspace('/tendencias'))
 }
 
+// ── Agenda (agendamentos que o scheduler lê) ─────────────────────────────
+export interface Agenda {
+  id: number
+  workspace_id: string
+  pilar: string
+  formato: string
+  turno: string | null
+  horario_cron: string
+  ativo: boolean
+  criado_em: string
+}
+
+export function listarAgenda() {
+  return req<Agenda[]>(comWorkspace('/agenda'))
+}
+
+export function criarAgenda(body: {
+  pilar: string
+  formato: string
+  turno?: string | null
+  horario_cron: string
+  ativo?: boolean
+}) {
+  return req<Agenda>('/agenda', {
+    method: 'POST',
+    body: JSON.stringify({ workspace_id: getWorkspace(), ...body }),
+  })
+}
+
+export function atualizarAgenda(
+  id: number,
+  patch: {
+    pilar?: string
+    formato?: string
+    turno?: string | null
+    horario_cron?: string
+    ativo?: boolean
+  },
+) {
+  return req<Agenda>(`/agenda/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  })
+}
+
+export function removerAgenda(id: number) {
+  return req<{ ok: boolean; id: number }>(`/agenda/${id}`, { method: 'DELETE' })
+}
+
+// ── Métricas (estrutura pronta p/ Instagram Graph API — v2) ───────────────
+export interface Metrica {
+  id: number
+  workspace_id: string
+  asset_id: string | null
+  periodo: string | null
+  swipe_rate: number | null
+  saves: number | null
+  shares: number | null
+  completion: number | null
+  coletado_em: string
+}
+
+export interface MetricasResposta {
+  metricas: Metrica[]
+  resumo: {
+    swipe_rate: number | null
+    saves: number | null
+    shares: number | null
+    completion: number | null
+    n_posts: number
+  } | null
+  fonte: string
+  conectada: boolean
+}
+
+export function listarMetricas() {
+  return req<MetricasResposta>(comWorkspace('/metricas'))
+}
+
 // ── Personagem ───────────────────────────────────────────────────────────
 export interface Personagem {
   id: number
