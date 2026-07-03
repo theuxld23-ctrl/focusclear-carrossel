@@ -7,7 +7,10 @@ export interface SlidePreview {
   id: string
   n: number
   funcao?: string
+  caminho?: string | null // se for vídeo (motion), renderiza <video>
 }
+
+const ehVideo = (c?: string | null) => !!c && /\.(mp4|webm)$/i.test(c)
 
 export default function CarrosselPreview({ slides }: { slides: SlidePreview[] }) {
   const [i, setI] = useState(0)
@@ -36,13 +39,25 @@ export default function CarrosselPreview({ slides }: { slides: SlidePreview[] })
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imagemAssetUrl(slide.id)}
-        alt={`slide ${slide.n}${slide.funcao ? ` — ${slide.funcao}` : ''}`}
-        className="h-full w-full object-cover"
-        draggable={false}
-      />
+      {ehVideo(slide.caminho) ? (
+        <video
+          key={slide.id}
+          src={imagemAssetUrl(slide.id)}
+          className="h-full w-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imagemAssetUrl(slide.id)}
+          alt={`slide ${slide.n}${slide.funcao ? ` — ${slide.funcao}` : ''}`}
+          className="h-full w-full object-cover"
+          draggable={false}
+        />
+      )}
 
       {total > 1 && (
         <>

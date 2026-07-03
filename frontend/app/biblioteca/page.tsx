@@ -19,9 +19,10 @@ const PROXIMO: Partial<Record<AssetStatus, { proximo: AssetStatus; label: string
   agendado: { proximo: 'publicado', label: 'Publicar' },
 }
 
-// Um carrossel = os slides que compartilham a mesma pasta de PNG (engine/output/<dir>/).
+// Um carrossel/motion = os slides que compartilham a mesma pasta (engine/output/<dir>/).
 interface Carrossel {
   key: string
+  tipo: 'carrossel' | 'motion'
   assets: Asset[]
   slides: SlidePreview[]
   status: AssetStatus
@@ -35,35 +36,27 @@ const asStr = (v: unknown) => (typeof v === 'string' ? v : '')
 const asN = (v: unknown) => (typeof v === 'number' ? v : Number(v) || 0)
 const dirDe = (caminho: string) => caminho.replace(/\/[^/]*$/, '')
 
-function agrupar(assets: Asset[]): {
-  carrosseis: Carrossel[]
-  reels: Asset[]
-  legado: Asset[]
-} {
-  const slides = assets.filter((a) => a.tipo === 'slide' && a.caminho)
-  const reels = assets.filter((a) => a.tipo === 'reel' && a.caminho)
-  const legado = assets.filter(
-    (a) => !((a.tipo === 'slide' || a.tipo === 'reel') && a.caminho),
-  )
-
+// Agrupa assets de slides (tipo "slide" ou "motion") por pasta em cards navegáveis.
+function agruparSlides(assets: Asset[], tipo: 'carrossel' | 'motion'): Carrossel[] {
   const mapa = new Map<string, Asset[]>()
-  for (const a of slides) {
+  for (const a of assets) {
     const k = dirDe(a.caminho as string)
     if (!mapa.has(k)) mapa.set(k, [])
     mapa.get(k)!.push(a)
   }
-
-  const carrosseis: Carrossel[] = [...mapa.entries()].map(([key, grupo]) => {
+  const grupos = [...mapa.entries()].map(([key, grupo]) => {
     const ordenados = [...grupo].sort((x, y) => asN(x.metadados.n) - asN(y.metadados.n))
     const capa = ordenados.find((a) => asN(a.metadados.n) === 1) ?? ordenados[0]
     const times = capa.metadados.times
     return {
       key,
+      tipo,
       assets: ordenados,
       slides: ordenados.map((a) => ({
         id: a.id,
         n: asN(a.metadados.n),
         funcao: asStr(a.metadados.funcao),
+        caminho: a.caminho,
       })),
       status: capa.status,
       perfil: asStr(capa.metadados.perfil),
@@ -72,9 +65,31 @@ function agrupar(assets: Asset[]): {
       criado_em: capa.criado_em,
     }
   })
-  carrosseis.sort((a, b) => b.criado_em.localeCompare(a.criado_em))
-  reels.sort((a, b) => b.criado_em.localeCompare(a.criado_em))
-  return { carrosseis, reels, legado }
+  grupos.sort((a, b) => b.criado_em.localeCompare(a.criado_em))
+  return grupos
+}
+
+function agrupar(assets: Asset[]): {
+  carrosseis: Carrossel[]
+  motions: Carrossel[]
+  reels: Asset[]
+  legado: Asset[]
+} {
+  const carrosseis = agruparSlides(
+    assets.filter((a) => a.tipo === 'slide' && a.caminho),
+    'carrossel',
+  )
+  const motions = agruparSlides(
+    assets.filter((a) => a.tipo === 'motion' && a.caminho),
+    'motion',
+  )
+  const reels = assets
+    .filter((a) => a.tipo === 'reel' && a.caminho)
+    .sort((a, b) => b.criado_em.localeCompare(a.criado_em))
+  const legado = assets.filter(
+    (a) => !(['slide', 'motion', 'reel'].includes(a.tipo) && a.caminho),
+  )
+  return { carrosseis, motions, reels, legado }
 }
 
 export default function BibliotecaPage() {
@@ -95,7 +110,7 @@ export default function BibliotecaPage() {
     carregar()
   }, [carregar])
 
-  const { carrosseis, reels, legado } = useMemo(
+  const { carrosseis, motions, reels, legado } = useMemo(
     () => agrupar(assets ?? []),
     [assets],
   )
@@ -136,7 +151,11 @@ export default function BibliotecaPage() {
   }
 
   const vazio =
-    assets !== null && carrosseis.length === 0 && reels.length === 0 && legado.length === 0
+    assets !== null &&
+    carrosseis.length === 0 &&
+    motions.length === 0 &&
+    reels.length === 0 &&
+    legado.length === 0
 
   return (
     <div className="space-y-8">
@@ -146,7 +165,7 @@ export default function BibliotecaPage() {
             Biblioteca
           </h1>
           <p className="mt-1 font-body text-sm text-neutral-500">
-            Carrosséis e reels gerados pelo motor. Navegue, revise e aprove.
+            Carrosséis, motion e reels gerados pelo motor. Navegue, revise e aprove.
           </p>
         </div>
         <button
@@ -198,6 +217,62 @@ export default function BibliotecaPage() {
                       )}
                       {c.fase && <span className="text-neutral-600"> · {c.fase}</span>}
                       <span className="text-neutral-600"> · {c.slides.length} slides</span>
+                    </p>
+                    <p>{dataHora(c.criado_em)}</p>
+                  </div>
+
+                  <div className="mt-auto">
+                    {passo ? (
+                      <button
+                        onClick={() => avancarCarrossel(c)}
+                        disabled={atualizando === c.key}
+                        className="w-full rounded-lg bg-electric/15 px-3 py-2 font-display text-sm font-semibold text-electric transition-colors hover:bg-electric/25 disabled:opacity-50"
+                      >
+                        {atualizando === c.key ? '…' : passo.label}
+                      </button>
+                    ) : (
+                      <p className="text-center font-body text-xs text-neutral-600">
+                        publicado ✓
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {/* Motion — carrossel com 1-2 slides animados (webm); navegável + badge */}
+          {motions.map((c) => {
+            const passo = PROXIMO[c.status]
+            const nAnimados = c.slides.filter(
+              (s) => !!s.caminho && /\.(mp4|webm)$/i.test(s.caminho),
+            ).length
+            return (
+              <div key={c.key} className="card flex flex-col overflow-hidden">
+                <div className="relative">
+                  <CarrosselPreview slides={c.slides} />
+                  <span className="pointer-events-none absolute left-2.5 top-2.5">
+                    <StatusBadge status={c.status} />
+                  </span>
+                  <span className="pointer-events-none absolute right-2.5 top-2.5 rounded-full bg-carbon-900/75 px-2 py-0.5 font-display text-[10px] uppercase tracking-wider text-electric backdrop-blur-sm">
+                    motion
+                  </span>
+                </div>
+
+                <div className="flex flex-1 flex-col gap-3 p-4">
+                  <div className="space-y-1 font-body text-xs text-neutral-500">
+                    {c.times.length === 2 && (
+                      <p className="text-neutral-300">
+                        {c.times[0]} <span className="text-neutral-600">x</span> {c.times[1]}
+                      </p>
+                    )}
+                    <p>
+                      {c.perfil && <span className="text-electric">{c.perfil}</span>}
+                      {c.fase && <span className="text-neutral-600"> · {c.fase}</span>}
+                      <span className="text-neutral-600"> · {c.slides.length} slides</span>
+                      {nAnimados > 0 && (
+                        <span className="text-neutral-600"> · {nAnimados} animados</span>
+                      )}
                     </p>
                     <p>{dataHora(c.criado_em)}</p>
                   </div>

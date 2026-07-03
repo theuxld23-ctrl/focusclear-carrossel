@@ -21,6 +21,36 @@ from engine.nodes.roteirista_video import escrever_roteiro_video
 from engine.nodes.voz import gerar_voz
 from engine.nodes.avatar import gerar_avatar
 from engine.nodes.reel_compositor import compor_reel
+from engine.nodes.motion_compositor import compor_motion
+
+
+def _salvar_assets_motion(db: Session, job: Job, state: dict):
+    """Um Asset tipo 'motion' por slide (PNG estático ou webm animado)."""
+    for carrossel in state.get("carrosseis_prontos", []):
+        perfil = carrossel.get("_perfil")
+        jogo = carrossel.get("_jogo", {})
+        legenda = carrossel.get("legenda", "")
+        for slide in carrossel.get("slides", []):
+            caminho = slide.get("_caminho")
+            if not caminho:
+                continue
+            db.add(Asset(
+                id=str(uuid.uuid4()),
+                job_id=job.id,
+                workspace_id=job.workspace_id,
+                tipo="motion",
+                caminho=caminho,
+                status="rascunho",
+                metadados={
+                    "n": slide.get("n"),
+                    "funcao": slide.get("funcao"),
+                    "animado": slide.get("_animado", False),
+                    "perfil": perfil,
+                    "times": jogo.get("times"),
+                    "fase_copa": state.get("fase_copa"),
+                    "legenda": legenda if slide.get("n") == 1 else "",
+                },
+            ))
 
 
 def _salvar_assets_carrossel(db: Session, job: Job, state: dict):
@@ -133,6 +163,13 @@ def executar_job(job_id: str):
             state = compor_reel(state)
             state = notificar_telegram(state)
             _salvar_assets_reel(db, job, state)
+        elif job.formato == "motion":
+            # Ramo MOTION: roteirista → resolve_imagens → motion_compositor
+            state = escrever_roteiro(state)
+            state = resolve_imagens(state)
+            state = compor_motion(state)
+            state = notificar_telegram(state)
+            _salvar_assets_motion(db, job, state)
         else:
             # Ramo CARROSSEL: roteirista → resolve_imagens → compositor
             state = escrever_roteiro(state)

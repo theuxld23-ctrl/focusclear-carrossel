@@ -5,7 +5,8 @@ Dois batches diários no fuso de São Paulo: 06h (manhã/newsjacking) e 13h
 """
 from apscheduler.schedulers.background import BackgroundScheduler
 from backend.services.job_service import criar_job, executar_job
-from backend.database import SessionLocal
+from backend.database import SessionLocal, Pilar, Tendencia
+from engine.nodes.coletor_tendencias import coletar_tendencias
 
 scheduler = BackgroundScheduler(timezone="America/Sao_Paulo")
 
@@ -24,9 +25,41 @@ def job_tarde():
     executar_job(job.id)
 
 
+def coletar_e_salvar_tendencias(workspace_id: str = "focusclear") -> int:
+    """Coleta tendências dos pilares ATIVOS e substitui as do workspace no banco.
+
+    Retorna quantas tendências foram salvas. Sem BRAVE_API_KEY, o coletor devolve
+    [] e o banco fica intocado (nada a substituir).
+    """
+    db = SessionLocal()
+    try:
+        ativos = [
+            (p.config or {}).get("chave") or p.nome
+            for p in db.query(Pilar).filter_by(workspace_id=workspace_id, status="ativo").all()
+        ]
+        tends = coletar_tendencias([a for a in ativos if a])
+        if not tends:
+            return 0
+        db.query(Tendencia).filter_by(workspace_id=workspace_id).delete()
+        for t in tends:
+            db.add(Tendencia(
+                workspace_id=workspace_id, pilar=t["pilar"], termo=t["termo"], score=t["score"],
+            ))
+        db.commit()
+        return len(tends)
+    finally:
+        db.close()
+
+
+def job_tendencias():
+    salvas = coletar_e_salvar_tendencias("focusclear")
+    print(f"[tendencias] coleta diária: {salvas} termos salvos")
+
+
 def iniciar_scheduler():
     scheduler.add_job(job_manha, "cron", hour=6, minute=0, id="batch_manha")
     scheduler.add_job(job_tarde, "cron", hour=13, minute=0, id="batch_tarde")
+    scheduler.add_job(job_tendencias, "cron", hour=5, minute=0, id="coletor_tendencias")
     scheduler.start()
 
 
