@@ -11,7 +11,8 @@ Sistema autônomo que gera carrosséis de Instagram sobre futebol que funcionam 
 - SofaScore: BLOQUEADO (HTTP 403 mesmo em IP residencial) — Brave permanece como fonte principal
 - Palmier Pro: v0.5.2 instalado, MCP http://127.0.0.1:19789/mcp (endpoint JSON-RPC via POST; `/mcp/health` não existe nesta versão)
 - APIs: pendentes — .env criado vazio
-- Próxima: Fase 1 — Backend como serviço (FastAPI + SQLite)
+- ✅ Fase 1 — Backend como serviço: FastAPI (`backend/`) + SQLite (`focusclear.db`, gitignored) + APScheduler (batches 06h/13h BRT). Tabelas com `workspace_id`; seed workspace `focusclear`. Endpoints: `/health`, `/jobs` (dispara motor em bg), `/assets`. Rodar: `uvicorn backend.main:app --port 8010`.
+- Próxima: Fase 2 — completar o pipeline do motor (coleta_imagens → seletor → roteirista → compositor → telegram) atrás da fila de jobs
 
 ## Ambiente (venv)
 
