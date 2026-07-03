@@ -12,7 +12,8 @@ Sistema autônomo que gera carrosséis de Instagram sobre futebol que funcionam 
 - Palmier Pro: v0.5.2 instalado, MCP http://127.0.0.1:19789/mcp (endpoint JSON-RPC via POST; `/mcp/health` não existe nesta versão)
 - APIs: pendentes — .env criado vazio
 - ✅ Fase 1 — Backend como serviço: FastAPI (`backend/`) + SQLite (`focusclear.db`, gitignored) + APScheduler (batches 06h/13h BRT). Tabelas com `workspace_id`; seed workspace `focusclear`. Endpoints: `/health`, `/jobs` (dispara motor em bg), `/assets`. Rodar: `uvicorn backend.main:app --port 8010`.
-- Próxima: Fase 2 — completar o pipeline do motor (coleta_imagens → seletor → roteirista → compositor → telegram) atrás da fila de jobs
+- ✅ Frontend core — Next.js 14.2.35 + Tailwind (`frontend/`, porta **3010**). Abas: `/criar` (form + polling do job a cada 2s), `/biblioteca` (assets + PATCH de aprovação), `/fila` (jobs recentes, auto-refresh 3s). Consome o backend via **rewrite `/api/* → :8010`** (evita CORS; `next.config.mjs` usa rewrites explícitos p/ preservar a barra final que o FastAPI exige — client chama sem barra). Design CTec: carbon #0D0D10, electric #1B4FFF, Space Grotesk + Inter Tight. Rodar: `cd frontend && npm run dev`.
+- Próxima: Fase 2 — completar o pipeline do motor (coleta_imagens → seletor → roteirista → compositor → telegram) atrás da fila de jobs; preview real na biblioteca só depois do compositor
 
 ## Ambiente (venv)
 
