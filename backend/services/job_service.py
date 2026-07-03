@@ -1,11 +1,21 @@
 """Lógica de jobs — cria o registro, dispara o motor em background, persiste
-status e resultado. v1 roda só o nó de pesquisa (motor completo vem nas etapas
-seguintes da construção)."""
+status e resultado.
+
+executar_job roda o PIPELINE COMPLETO do carrossel:
+  pesquisa → coleta_imagens → seletor → roteirista → resolve_imagens → compositor
+e salva um Asset tipo "slide" por PNG gerado (engine/output/). Em produção usa
+config.get_llm() e a Brave reais — sem as chaves no .env, falha já na pesquisa e
+o job vai a "erro" (comportamento esperado até as APIs entrarem)."""
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import Session
 from backend.database import Job, Asset
 from engine.nodes.pesquisa import pesquisa_manha, pesquisa_tarde
+from engine.nodes.coleta_imagens import coletar_imagens
+from engine.nodes.seletor import selecionar
+from engine.nodes.roteirista import escrever_roteiro
+from engine.nodes.resolve_imagens import resolve_imagens
+from engine.nodes.compositor import compor
 
 
 def criar_job(db: Session, workspace_id: str, pilar: str, formato: str,
@@ -45,26 +55,44 @@ def executar_job(job_id: str):
             "erros": [],
         }
 
-        # Por enquanto: só o nó de pesquisa (motor completo vem nas etapas seguintes)
+        # Pipeline completo: pesquisa → coleta → seletor → roteirista → resolve → compositor
         if job.turno == "tarde":
-            resultado = pesquisa_tarde(state)
+            state = pesquisa_tarde(state)
         else:
-            resultado = pesquisa_manha(state)
+            state = pesquisa_manha(state)
+        state = coletar_imagens(state)
+        state = selecionar(state)
+        state = escrever_roteiro(state)
+        state = resolve_imagens(state)
+        state = compor(state)
 
-        # Salvar resultado como asset placeholder
-        asset = Asset(
-            id=str(uuid.uuid4()),
-            job_id=job.id,
-            workspace_id=job.workspace_id,
-            tipo="pesquisa",  # placeholder até compositor existir
-            status="rascunho",
-            metadados={
-                "jogos_pesquisados": resultado.get("jogos_pesquisados", []),
-                "fase_copa": resultado.get("fase_copa"),
-                "erros": resultado.get("erros", []),
-            }
-        )
-        db.add(asset)
+        # Um Asset tipo "slide" por PNG gerado
+        prontos = state.get("carrosseis_prontos", [])
+        for carrossel in prontos:
+            perfil = carrossel.get("_perfil")
+            jogo = carrossel.get("_jogo", {})
+            legenda = carrossel.get("legenda", "")
+            for slide in carrossel.get("slides", []):
+                caminho = slide.get("_png")
+                if not caminho:
+                    continue
+                db.add(Asset(
+                    id=str(uuid.uuid4()),
+                    job_id=job.id,
+                    workspace_id=job.workspace_id,
+                    tipo="slide",
+                    caminho=caminho,
+                    status="rascunho",
+                    metadados={
+                        "n": slide.get("n"),
+                        "funcao": slide.get("funcao"),
+                        "perfil": perfil,
+                        "times": jogo.get("times"),
+                        "fase_copa": state.get("fase_copa"),
+                        "legenda": legenda if slide.get("n") == 1 else "",
+                        "tipografico": slide.get("_tipografico", False),
+                    },
+                ))
 
         job.status = "concluido"
         job.atualizado_em = datetime.utcnow()
