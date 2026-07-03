@@ -39,14 +39,29 @@ def selecoes_validas() -> set[str]:
 
 
 def validar_factual(
-    jogos: list[dict], ancora: Optional[set[str]] = None
+    jogos: list[dict], ancora: Optional[set[str]] = None, pilar: str = "futebol"
 ) -> tuple[list[dict], list[dict]]:
-    """CAMADA DE CÓDIGO. Separa jogos válidos dos descartados por fato.
+    """CAMADA DE CÓDIGO. Separa jogos/momentos válidos dos descartados por fato.
 
-    Regra: os dois times têm que estar na âncora do pilar. Quem não estiver →
-    descartado com motivo "time fora da Copa 2026" (erro real: confundir jogo de
-    eliminatória/amistoso — ex. Nigéria, que não está na Copa — com jogo da Copa).
+    Futebol: os dois times têm que estar na âncora (selecoes_classificadas.json).
+    Quem não estiver → descartado ("time fora da Copa 2026"): erro real é confundir
+    jogo de eliminatória/amistoso (ex. Nigéria, que não está na Copa) com jogo da Copa.
+
+    Outros pilares: a âncora factual ainda não é uma lista fechada (ex. cultura_pop =
+    elenco por temporada, a criar). Sem lista, não há como descartar em código —
+    aceita momentos com conteúdo e descarta só os vazios. O julgamento fica com o LLM.
     """
+    if pilar != "futebol":
+        validos: list[dict] = []
+        descartados: list[dict] = []
+        for jogo in jogos:
+            momento = (jogo.get("momento") or jogo.get("fatos_duros") or "").strip()
+            if momento:
+                validos.append(jogo)
+            else:
+                descartados.append({"momento": str(jogo)[:60], "motivo": "momento vazio"})
+        return validos, descartados
+
     ancora = ancora if ancora is not None else selecoes_validas()
     validos: list[dict] = []
     descartados: list[dict] = []
@@ -88,6 +103,7 @@ def _payload_usuario(state: dict, validos: list[dict]) -> str:
         material.append(
             {
                 "times": j.get("times"),
+                "momento": j.get("momento"),  # pilar não-futebol: entidade/assunto
                 "placar": j.get("placar"),
                 "narrativa": j.get("narrativa", ""),
                 "fatos_duros": j.get("fatos_duros", ""),
@@ -106,11 +122,20 @@ def _payload_usuario(state: dict, validos: list[dict]) -> str:
 
 
 def _casa_jogo(momento: str, fatos: str, validos: list[dict]) -> Optional[dict]:
-    """Liga um carrossel aprovado de volta ao jogo pesquisado (por nome de time)."""
+    """Liga um carrossel aprovado de volta ao jogo/momento pesquisado.
+
+    Futebol: casa por nome dos dois times. Não-futebol (sem times): casa pela
+    entidade do momento aparecer no texto aprovado (preserva a narrativa)."""
     alvo = _norm(f"{momento} {fatos}")
     for j in validos:
         times = j.get("times") or []
         if times and all(_norm(t) in alvo for t in times):
+            return j
+    for j in validos:
+        if j.get("times"):
+            continue
+        ent = _norm(j.get("momento") or "")
+        if ent and ent in alvo:
             return j
     return None
 
@@ -122,9 +147,10 @@ def selecionar(
     """Valida em código, chama o LLM e devolve carrosseis_aprovados + descartados."""
     complete = complete or get_llm()
     jogos = state.get("jogos_pesquisados", [])
+    pilar = state.get("pilar_ativo", "futebol")
 
-    # CAMADA 1 (código): validação factual anti-alucinação.
-    validos, descartados_fato = validar_factual(jogos)
+    # CAMADA 1 (código): validação factual anti-alucinação (âncora por pilar).
+    validos, descartados_fato = validar_factual(jogos, pilar=pilar)
 
     if not validos:
         state["carrosseis_aprovados"] = []

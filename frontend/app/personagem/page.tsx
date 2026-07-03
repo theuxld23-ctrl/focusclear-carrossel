@@ -12,6 +12,7 @@ export default function PersonagemPage() {
   const [nome, setNome] = useState('')
   const [descricao, setDescricao] = useState('')
   const [tom, setTom] = useState('')
+  const [voiceId, setVoiceId] = useState('')
   const [temFoto, setTemFoto] = useState(false)
   const [bust, setBust] = useState(0) // cache-bust da foto após upload
   const [erro, setErro] = useState<string | null>(null)
@@ -25,6 +26,7 @@ export default function PersonagemPage() {
       setNome(p.nome || '')
       setDescricao(p.descricao || '')
       setTom(p.tom_de_voz || '')
+      setVoiceId((p.config?.voice_id as string) || '')
       setTemFoto(Boolean(p.foto_ref))
       setBust(Date.now())
     } catch (e) {
@@ -40,7 +42,7 @@ export default function PersonagemPage() {
     setSalvando(true)
     setSalvo(false)
     try {
-      await salvarPersonagem({ nome, descricao, tom_de_voz: tom })
+      await salvarPersonagem({ nome, descricao, tom_de_voz: tom, voice_id: voiceId })
       setSalvo(true)
       setErro(null)
     } catch (e) {
@@ -111,6 +113,18 @@ export default function PersonagemPage() {
               placeholder="ex.: acolhedor, direto, sem jargão clínico"
               value={tom}
               onChange={(e) => setTom(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className="label" htmlFor="voice">
+              Voice ID <span className="text-neutral-600">(ElevenLabs — reel)</span>
+            </label>
+            <input
+              id="voice"
+              className="input font-mono"
+              placeholder="ex.: 21m00Tcm4TlvDq8ikWAM"
+              value={voiceId}
+              onChange={(e) => setVoiceId(e.target.value)}
             />
           </div>
           <div className="flex items-center gap-3">

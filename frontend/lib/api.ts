@@ -134,6 +134,7 @@ export interface Personagem {
   descricao: string
   tom_de_voz: string
   foto_ref: string | null
+  config?: { voice_id?: string } & Record<string, unknown>
 }
 
 export function getPersonagem() {
@@ -144,6 +145,7 @@ export function salvarPersonagem(body: {
   nome: string
   descricao: string
   tom_de_voz: string
+  voice_id?: string
 }) {
   return req<Personagem>('/personagem', { method: 'PUT', body: JSON.stringify(body) })
 }
@@ -162,6 +164,8 @@ export async function uploadFotoPersonagem(file: File) {
 }
 
 // ── Integrações (.env, read-only) ────────────────────────────────────────
+export type IntegracaoStatus = 'pendente' | 'configurada' | 'ativa' | 'invalida'
+
 export interface Integracao {
   rotulo: string
   chave: string
@@ -169,8 +173,14 @@ export interface Integracao {
   secreto: boolean
   configurada: boolean
   valor: string
+  status: IntegracaoStatus
 }
 
 export function listarIntegracoes() {
   return req<{ integracoes: Integracao[] }>('/config')
+}
+
+// Validação ao vivo das chaves preenchidas (chama os serviços reais, read-only).
+export function validarIntegracoes() {
+  return req<{ validacoes: { chave: string; status: IntegracaoStatus }[] }>('/config/validar')
 }

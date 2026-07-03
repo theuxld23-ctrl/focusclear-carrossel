@@ -39,6 +39,7 @@ class PutPersonagem(BaseModel):
     nome: str = ""
     descricao: str = ""
     tom_de_voz: str = ""
+    voice_id: str = ""  # ElevenLabs — alimenta o nó voz.py (via banco → state)
 
 
 @router.put("/")
@@ -49,6 +50,7 @@ def salvar_personagem(
     p.nome = body.nome
     p.descricao = body.descricao
     p.tom_de_voz = body.tom_de_voz
+    p.config = {**(p.config or {}), "voice_id": body.voice_id.strip()}
     db.commit()
     db.refresh(p)
     return p

@@ -43,7 +43,9 @@ def gerar_voz(
 ) -> dict:
     """Preenche reel['_audio'] (path do mp3) por reel; no-op se sem chave."""
     api_key = api_key if api_key is not None else config.ELEVENLABS_API_KEY
-    voice_id = voice_id if voice_id is not None else config.ELEVENLABS_VOICE_ID
+    # voice_id do personagem (banco, via state) tem prioridade sobre o .env.
+    if voice_id is None:
+        voice_id = (state.get("voz_config") or {}).get("voice_id") or config.ELEVENLABS_VOICE_ID
 
     if not sintetizar and not api_key:
         print("[voz] ELEVENLABS_API_KEY ausente — pulando (reel sai sem narração)")

@@ -1,16 +1,11 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { criarJob, getJob, type JobStatus } from '@/lib/api'
+import { criarJob, getJob, listarPilares, type JobStatus } from '@/lib/api'
 import StatusBadge from '@/components/StatusBadge'
 import { tempoDecorrido } from '@/lib/format'
 
-const PILARES = [
-  { value: 'futebol', label: 'Futebol', ativo: true },
-  { value: 'cultura_pop', label: 'Cultura Pop / Fofoca', ativo: false },
-  { value: 'musica_popular', label: 'Música Popular', ativo: false },
-  { value: 'datas_sazonais', label: 'Datas e Sazonais', ativo: false },
-]
+type OpcaoPilar = { value: string; label: string; ativo: boolean }
 const FORMATOS = ['carrossel', 'reel', 'motion']
 const TURNOS = [
   { value: 'manha', label: 'Manhã — jogos de ontem' },
@@ -26,6 +21,9 @@ function isTerminal(s: JobStatus) {
 export default function CriarPage() {
   const [tema, setTema] = useState('')
   const [pilar, setPilar] = useState('futebol')
+  const [pilares, setPilares] = useState<OpcaoPilar[]>([
+    { value: 'futebol', label: 'Futebol', ativo: true },
+  ])
   const [formato, setFormato] = useState('carrossel')
   const [turno, setTurno] = useState('manha')
 
@@ -33,6 +31,27 @@ export default function CriarPage() {
   const [erroSubmit, setErroSubmit] = useState<string | null>(null)
   const [tracked, setTracked] = useState<Tracked | null>(null)
   const [tick, setTick] = useState(0) // força re-render do tempo decorrido
+
+  // Só lista pilares ATIVOS no banco (Fase 5). Fallback futebol se a chamada falhar.
+  useEffect(() => {
+    listarPilares()
+      .then((rows) => {
+        const ativos = rows
+          .filter((p) => p.status === 'ativo')
+          .map((p) => ({
+            value: String((p.config as { chave?: string })?.chave || p.nome),
+            label: p.nome,
+            ativo: true,
+          }))
+        if (ativos.length) {
+          setPilares(ativos)
+          setPilar((atual) => (ativos.some((a) => a.value === atual) ? atual : ativos[0].value))
+        }
+      })
+      .catch(() => {
+        /* mantém o fallback futebol */
+      })
+  }, [])
 
   // Pré-preenche a partir de ?tema=&pilar= (ex.: "criar a partir disso" em /tendencias).
   // Aditivo: só roda no mount e não muda nada quando não há query string.
@@ -125,10 +144,9 @@ export default function CriarPage() {
               value={pilar}
               onChange={(e) => setPilar(e.target.value)}
             >
-              {PILARES.map((p) => (
-                <option key={p.value} value={p.value} disabled={!p.ativo}>
+              {pilares.map((p) => (
+                <option key={p.value} value={p.value}>
                   {p.label}
-                  {p.ativo ? '' : ' — em breve'}
                 </option>
               ))}
             </select>

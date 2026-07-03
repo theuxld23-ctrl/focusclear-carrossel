@@ -55,14 +55,18 @@ def _normalizar(res: dict) -> Optional[dict]:
 
 
 def _queries_do_jogo(jogo: dict) -> list[str]:
-    """Queries de imagem por jogo: lance/protagonista + reação/contexto."""
-    t = jogo.get("times") or ["", ""]
-    base = f"{t[0]} x {t[1]} Copa do Mundo 2026"
-    return [
-        f"{base} lance jogo",
-        f"{base} torcida comemoração",
-        f"{t[0]} {t[1]} estádio",
-    ]
+    """Queries de imagem por jogo/momento: lance/protagonista + reação/contexto."""
+    t = jogo.get("times") or []
+    if len(t) == 2:
+        base = f"{t[0]} x {t[1]} Copa do Mundo 2026"
+        return [
+            f"{base} lance jogo",
+            f"{base} torcida comemoração",
+            f"{t[0]} {t[1]} estádio",
+        ]
+    # Pilar não-futebol: sem times, usa o momento (entidade extraída) como base.
+    momento = (jogo.get("momento") or jogo.get("fatos_duros") or "").strip()
+    return [f"{momento} foto", f"{momento} repercussão"] if momento else ["assunto do dia foto"]
 
 
 def coletar_imagens(

@@ -9,8 +9,8 @@ o job vai a "erro" (comportamento esperado até as APIs entrarem)."""
 import uuid
 from datetime import datetime
 from sqlalchemy.orm import Session
-from backend.database import Job, Asset
-from engine.nodes.pesquisa import pesquisa_manha, pesquisa_tarde
+from backend.database import Job, Asset, Pilar, Personagem
+from engine.nodes.pesquisa import pesquisa_manha, pesquisa_tarde, pesquisa_pilar
 from engine.nodes.coleta_imagens import coletar_imagens
 from engine.nodes.seletor import selecionar
 from engine.nodes.roteirista import escrever_roteiro
@@ -110,6 +110,31 @@ def _salvar_assets_reel(db: Session, job: Job, state: dict):
         ))
 
 
+def _config_do_pilar(db: Session, workspace_id: str, chave: str) -> dict:
+    """Config (JSON) do pilar cujo slug == chave, do banco. {} se não achar."""
+    for p in db.query(Pilar).filter_by(workspace_id=workspace_id).all():
+        cfg = p.config or {}
+        if cfg.get("chave") == chave or p.nome == chave:
+            return cfg
+    return {}
+
+
+def _state_do_personagem(db: Session, workspace_id: str) -> dict:
+    """Lê o personagem do banco e devolve as chaves que alimentam o reel
+    (foto de referência do avatar + voice_id/tom da voz). {} se não configurado."""
+    p = db.query(Personagem).filter_by(workspace_id=workspace_id).first()
+    if not p:
+        return {}
+    out: dict = {}
+    if p.foto_ref:
+        out["avatar_foto"] = p.foto_ref
+    out["voz_config"] = {
+        "voice_id": (p.config or {}).get("voice_id") or "",
+        "tom": p.tom_de_voz or "",
+    }
+    return out
+
+
 def criar_job(db: Session, workspace_id: str, pilar: str, formato: str,
               tema: str = None, turno: str = None) -> Job:
     job = Job(
@@ -139,19 +164,25 @@ def executar_job(job_id: str):
         job.atualizado_em = datetime.utcnow()
         db.commit()
 
-        # Montar state inicial para o motor
+        # Montar state inicial para o motor (config do pilar + personagem do banco)
         state = {
             "turno": job.turno or "manha",
             "pilar_ativo": job.pilar,
+            "pilar_config": _config_do_pilar(db, job.workspace_id, job.pilar),
             "data": datetime.utcnow().date().isoformat(),
             "erros": [],
         }
+        state.update(_state_do_personagem(db, job.workspace_id))
 
-        # Tronco comum: pesquisa → coleta_imagens → seletor
-        if job.turno == "tarde":
-            state = pesquisa_tarde(state)
+        # Pesquisa: futebol usa os turnos (jogos de ontem / históricos); os demais
+        # pilares usam a pesquisa genérica do pilar (queries do próprio pilar).
+        if job.pilar == "futebol":
+            if job.turno == "tarde":
+                state = pesquisa_tarde(state)
+            else:
+                state = pesquisa_manha(state)
         else:
-            state = pesquisa_manha(state)
+            state = pesquisa_pilar(state)
         state = coletar_imagens(state)
         state = selecionar(state)
 

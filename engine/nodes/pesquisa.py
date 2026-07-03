@@ -78,6 +78,37 @@ def fontes_do_pilar(pilar_ativo: str = "futebol") -> dict[str, str]:
     return _FONTES_POR_PILAR.get(pilar_ativo, _FONTES_CONFIAVEIS)
 
 
+# Queries de MOMENTO por pilar não-futebol (slug de pilares.json). Se o pilar não
+# estiver aqui, deriva do próprio config do pilar (carga_emocional/tipo_momento).
+_QUERIES_MOMENTO_POR_PILAR: dict[str, list[str]] = {
+    "cultura_pop": [
+        "polêmica influencer repercussão hoje Brasil",
+        "treta canal YouTube assunto do dia hoje",
+        "BBB paredão briga repercussão hoje",
+    ],
+    "musica_popular": [
+        "música viral hoje Brasil sertanejo funk pagode",
+        "lançamento música repercussão emoção hoje",
+    ],
+    "datas_sazonais": [
+        "data comemorativa próxima Brasil emoção",
+        "campanha sazonal assunto do momento sentimento",
+    ],
+}
+
+
+def queries_do_pilar(pilar: str, pilar_config: Optional[dict] = None) -> list[str]:
+    """Queries de busca do pilar. Usa o mapa por slug; se ausente, deriva do config
+    (campo carga_emocional → termos de dor; tipo_momento como contexto)."""
+    if pilar in _QUERIES_MOMENTO_POR_PILAR:
+        return list(_QUERIES_MOMENTO_POR_PILAR[pilar])
+    cfg = pilar_config or {}
+    termos = [t.strip() for t in re.split(r"[,;]", cfg.get("carga_emocional", "")) if t.strip()]
+    if termos:
+        return [f"{pilar} {t} repercussão hoje Brasil" for t in termos[:3]]
+    return [f"{pilar} assunto em alta hoje Brasil"]
+
+
 Jogo = dict[str, Any]
 
 _MESES_PT = [
@@ -399,6 +430,74 @@ def pesquisa_tarde(
         except Exception as e:  # noqa: BLE001
             erros.append(f"histórico {t['times']} falhou: {e!r}")
     state["jogos_pesquisados"] = jogos
+    return state
+
+
+# ── Pesquisa genérica por pilar (não-futebol) ────────────────────────────────
+def pesquisa_pilar(
+    state: dict,
+    buscar: Optional[Callable[[str], list[dict]]] = None,
+    por_query: int = 8,
+    top: int = 12,
+) -> dict:
+    """Momentos com carga emocional de um pilar NÃO-futebol (genérico).
+
+    Lê pilar_ativo/pilar_config do state, roda as queries do pilar na Brave e
+    extrai 'momentos' (entidades + narrativa dos snippets). Popula
+    `jogos_pesquisados` no MESMO formato consumido pelo seletor — só que sem
+    times (a validação factual do seletor é pilar-aware). Costura injetável
+    `buscar(query) -> list[snippets]` permite testar sem rede.
+    """
+    from engine.nodes.coletor_tendencias import extrair_candidatos  # reuso do NER
+
+    pilar = state.get("pilar_ativo", "futebol")
+    cfg = state.get("pilar_config") or {}
+    state.setdefault("data", _hoje_iso())
+    state.setdefault("fase_copa", "")
+    erros = state.setdefault("erros", [])
+
+    def _buscar_default(q: str) -> list[dict]:
+        return _brave_web(q, erros, n=por_query)
+
+    buscar = buscar or _buscar_default
+
+    agrega: dict[str, dict[str, Any]] = {}  # momento_norm -> {momento, ocorr, narrativa, urls}
+    for q in queries_do_pilar(pilar, cfg):
+        try:
+            snippets = buscar(q)
+        except Exception as e:  # noqa: BLE001 — uma query falha não derruba o pilar
+            erros.append(f"pesquisa pilar {pilar} query {q!r} falhou: {e!r}")
+            continue
+        for s in snippets:
+            url = s.get("url") or s.get("link") or ""
+            texto = f"{s.get('title', '')} {s.get('description', '')}".strip()
+            desc = (s.get("description") or "").strip()
+            for termo in extrair_candidatos(texto):
+                ch = _norm(termo)
+                d = agrega.setdefault(ch, {"momento": termo, "ocorr": 0, "narrativa": "", "urls": []})
+                d["ocorr"] += 1
+                if not d["narrativa"] and desc:
+                    d["narrativa"] = desc
+                if url and url not in d["urls"]:
+                    d["urls"].append(url)
+
+    ranq = sorted(agrega.values(), key=lambda d: d["ocorr"], reverse=True)[:top]
+    momentos: list[Jogo] = []
+    for d in ranq:
+        momentos.append({
+            "times": [],
+            "momento": d["momento"],
+            "placar": None,
+            "data": state["data"],
+            "fatos_duros": d["momento"],
+            "narrativa": d["narrativa"],
+            "fonte": ["brave"],
+            "fontes_dados": [],
+            "fontes_urls": d["urls"],
+            "fontes_concordam": False,
+            "pilar": pilar,
+        })
+    state["jogos_pesquisados"] = momentos
     return state
 
 

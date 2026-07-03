@@ -11,18 +11,38 @@ from engine.nodes.coletor_tendencias import coletar_tendencias
 scheduler = BackgroundScheduler(timezone="America/Sao_Paulo")
 
 
-def job_manha():
+def pilares_ativos(workspace_id: str = "focusclear") -> list[str]:
+    """Slugs dos pilares ATIVOS no banco. Retrocompat: se nenhum, default futebol."""
     db = SessionLocal()
-    job = criar_job(db, "focusclear", "futebol", "carrossel", turno="manha")
-    db.close()
-    executar_job(job.id)
+    try:
+        ativos = [
+            (p.config or {}).get("chave") or p.nome
+            for p in db.query(Pilar).filter_by(workspace_id=workspace_id, status="ativo").all()
+        ]
+        ativos = [a for a in ativos if a]
+        return ativos or ["futebol"]
+    finally:
+        db.close()
+
+
+def _rodar_batch(turno: str):
+    """Cria e executa um job de carrossel por pilar ativo (não só futebol)."""
+    db = SessionLocal()
+    try:
+        ids = [criar_job(db, "focusclear", p, "carrossel", turno=turno).id
+               for p in pilares_ativos()]
+    finally:
+        db.close()
+    for jid in ids:
+        executar_job(jid)
+
+
+def job_manha():
+    _rodar_batch("manha")
 
 
 def job_tarde():
-    db = SessionLocal()
-    job = criar_job(db, "focusclear", "futebol", "carrossel", turno="tarde")
-    db.close()
-    executar_job(job.id)
+    _rodar_batch("tarde")
 
 
 def coletar_e_salvar_tendencias(workspace_id: str = "focusclear") -> int:
