@@ -4,3 +4,5 @@ __pycache__/
 engine/output/
 .venv/
 venv/
+focusclear.db
+*.db
