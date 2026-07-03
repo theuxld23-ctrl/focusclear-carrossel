@@ -1,0 +1,435 @@
+{
+  "_doc": "PONTE EMOCIONAL — 5 perfis FocusClear. Coração do roteirista: como reconhecer que um momento (de QUALQUER pilar — futebol, novela/reality, música, datas) espelha cada perfil. AGNÓSTICO DE PILAR: cada perfil tem `criterio_de_casamento` que descreve a DOR (emoção), não o futebol — uma goleada (futebol), um paredão (reality) ou um término (música) podem espelhar a MESMA dor. Os exemplos de futebol viram `criterio_de_casamento.exemplos_por_pilar.futebol` (não são a regra); há exemplos de outro pilar pra deixar claro que é agnóstico. Momentos NÃO são lista fixa — a pesquisa do pilar ativo descobre; aqui está o critério de reconhecimento + calibração. Regra-mãe: falar da EXPERIÊNCIA nunca da condição; fatos sempre confirmados via pesquisa (nunca de memória); linguagem coletiva, sem jargão clínico.",
+  "ansiedade": {
+    "id": "ansiedade",
+    "ref_clinica_interna": "ansiedade",
+    "emocao_nucleo": "antecipar o pior — a cabeça perde o jogo antes de começar",
+    "experiencia_em_linguagem_popular": [
+      "acordar cansado de um dia que ainda nem começou",
+      "o coração dispara sem motivo aparente",
+      "travar mesmo quando dá tempo de fazer",
+      "imaginar tudo que pode dar errado antes de tentar",
+      "estar sempre em alerta, esperando algo ruim acontecer"
+    ],
+    "criterio_de_casamento": {
+      "a_dor": "momento de pressão/expectativa que paralisa — a cabeça antecipa o fracasso e perde o jogo antes de começar",
+      "procurar_por_generico": [
+        "alguém que trava sob pressão antes de um momento decisivo",
+        "favorito/apontado que desmorona sob o peso da expectativa",
+        "a tensão de antecipar o erro antes de ele acontecer"
+      ],
+      "imagem_emocional_central": "quem paralisa na hora decisiva / quem sentiu a derrota vir antes de qualquer sinal dela",
+      "viradas_canonicas": [
+        "sua cabeça já perdeu o jogo que ainda nem começou?",
+        "tem gente que perde o jogo na própria cabeça todo santo dia"
+      ],
+      "exemplos_por_pilar": {
+        "futebol": [
+          "goleada/derrota que já parecia perdida antes do fim",
+          "goleiro ou batedor hesitando/travando antes de um lance decisivo",
+          "time que se entrega psicologicamente sob pressão",
+          "pênaltis — a tensão de antecipar o erro antes do chute",
+          "favorito que desmorona sob o peso da expectativa"
+        ],
+        "novela_reality": [
+          "paredão em que a pessoa já se via eliminada antes do resultado",
+          "prova decisiva em que o participante trava sob pressão"
+        ]
+      }
+    },
+    "exemplos_calibracao": {
+      "historicos_tipicos": [
+        "a sensação coletiva do 7x1",
+        "tensão de disputa de pênaltis em mata-mata"
+      ],
+      "atuais": "qualquer jogo da véspera que bata no critério"
+    },
+    "subgeracoes_alvo": {
+      "primaria": [
+        "z_ponte",
+        "z_nativo"
+      ],
+      "secundaria": [
+        "y_tardio"
+      ]
+    },
+    "tom_por_subgeracao": {
+      "z_ponte": "verdade sem filtro, direto, humor permitido",
+      "z_nativo": "linguagem de rede, atenção redobrada à idade (menores)",
+      "y_tardio": "alívio da culpa — 'não é você que falhou, foi a régua que mudou'"
+    },
+    "linha_alivio_o_premio": [
+      "antecipar o pior o tempo todo cansa mais que o próprio problema",
+      "não é frescura, não é mente fraca — é a cabeça presa no modo alerta faz tempo demais"
+    ],
+    "cta_emocional": "e se desse pra desligar esse alarme?",
+    "restricoes_eticas": {
+      "nivel_cuidado": "medio",
+      "proibido": [
+        "afirmar que a pessoa TEM ansiedade",
+        "jargão clínico",
+        "linguagem acusatória"
+      ],
+      "obrigatorio": [
+        "falar da experiência não da condição",
+        "linguagem coletiva",
+        "fatos confirmados via Brave"
+      ]
+    }
+  },
+  "burnout": {
+    "id": "burnout",
+    "ref_clinica_interna": "burnout / esgotamento",
+    "emocao_nucleo": "o peso de carregar tudo sozinho até quebrar — cobrança demais por tempo demais",
+    "experiencia_em_linguagem_popular": [
+      "trabalhar no automático, sem sentir mais nada",
+      "estar exausto mas não conseguir parar",
+      "achar que se você parar, tudo desaba",
+      "ninguém perguntar como você está, só o que você produziu",
+      "o cansaço que dormir não cura"
+    ],
+    "criterio_de_casamento": {
+      "a_dor": "carregar tudo sozinho até quebrar — cobrança demais, por tempo demais, sobre quem não podia falhar",
+      "procurar_por_generico": [
+        "figura que segura todos nas costas e desaba (física ou emocionalmente)",
+        "líder/capitão cobrado além do humano, peso da responsabilidade",
+        "quem 'não pode faltar' e adoece de exaustão",
+        "ídolo que ruiu de esgotamento depois de carregar a esperança de muitos"
+      ],
+      "imagem_emocional_central": "quem ajoelha sozinho depois de carregar todos / quem não podia falhar e falhou",
+      "viradas_canonicas": [
+        "cobrança demais, por tempo demais, quebra qualquer um — até o mais forte",
+        "ninguém perguntou como ele tava por dentro"
+      ],
+      "exemplos_por_pilar": {
+        "futebol": [
+          "craque que carrega o time nas costas e desaba (física ou emocionalmente)",
+          "jogador que erra o pênalti decisivo depois de segurar o time o jogo todo",
+          "capitão/líder cobrado além do humano, peso da braçadeira",
+          "atleta que joga lesionado/exausto porque 'não pode faltar'",
+          "ídolo que chora de exaustão após carregar a responsabilidade de um país"
+        ],
+        "musica_popular": [
+          "artista que segurou a carreira/a família nas costas e ruiu no auge",
+          "ídolo que colapsou de exaustão sob a pressão da fama"
+        ]
+      }
+    },
+    "exemplos_calibracao": {
+      "historicos_tipicos": [
+        "o peso de ser a esperança de um país inteiro numa final",
+        "ídolo que segurou o time sozinho e ruiu"
+      ],
+      "atuais": "qualquer jogo da véspera onde um jogador claramente carregou peso desproporcional"
+    },
+    "subgeracoes_alvo": {
+      "primaria": [
+        "y_tardio",
+        "y_pioneiro"
+      ],
+      "secundaria": [
+        "z_ponte",
+        "x_transicao"
+      ]
+    },
+    "tom_por_subgeracao": {
+      "y_tardio": "alívio da culpa, validar a exaustão, foco nas mães em dupla/tripla jornada (lead mais quente)",
+      "y_pioneiro": "a euforia que virou conta a pagar, 'a conta chegou'",
+      "z_ponte": "verdade sem filtro sobre o corre que adoece",
+      "x_transicao": "permissão suave, pela porta dos filhos ou do corpo"
+    },
+    "linha_alivio_o_premio": [
+      "descansar não é fraqueza — é o que o mais forte esquece de fazer",
+      "não é preguiça, não é frescura: é o corpo cobrando uma conta velha"
+    ],
+    "cta_emocional": "e se desse pra entender o que tá por trás desse cansaço?",
+    "restricoes_eticas": {
+      "nivel_cuidado": "medio",
+      "proibido": [
+        "afirmar que a pessoa TEM burnout",
+        "jargão clínico",
+        "romantizar o esgotamento como mérito"
+      ],
+      "obrigatorio": [
+        "falar da experiência não da condição",
+        "linguagem coletiva",
+        "fatos confirmados via Brave"
+      ]
+    }
+  },
+  "trauma": {
+    "id": "trauma",
+    "ref_clinica_interna": "trauma complexo",
+    "emocao_nucleo": "a marca de quem aprendeu cedo que o mundo machuca — joga a vida na defensiva",
+    "experiencia_em_linguagem_popular": [
+      "estar sempre esperando o pior das pessoas",
+      "ter dificuldade de baixar a guarda, mesmo com quem ama",
+      "achar que precisa se proteger o tempo todo",
+      "reagir forte a coisas pequenas, sem entender por quê",
+      "sentir que tem uma ferida velha que nunca fechou"
+    ],
+    "criterio_de_casamento": {
+      "a_dor": "a marca de quem aprendeu cedo que o mundo machuca — vive na defensiva, não baixa a guarda nem com quem ama",
+      "procurar_por_generico": [
+        "quem vive na retranca por medo de se machucar de novo",
+        "alguém marcado por um erro/ferida antiga que carrega até hoje",
+        "história de origem dura, cicatriz que virou jeito de ser",
+        "quem se fecha, desconfia, não celebra mesmo quando vence"
+      ],
+      "imagem_emocional_central": "quem protege o rosto / a postura defensiva de quem já se machucou demais",
+      "viradas_canonicas": [
+        "quem aprendeu cedo que o mundo machuca, joga a vida toda na defensiva",
+        "tem ferida que a gente carrega tanto tempo que vira jeito de ser"
+      ],
+      "exemplos_por_pilar": {
+        "futebol": [
+          "jogador que apanhou a carreira toda e joga com medo/na retranca",
+          "atleta marcado por um erro antigo que carrega até hoje",
+          "história de superação de origem dura, cicatriz que virou jeito de jogar",
+          "jogador que se fecha, desconfia, não celebra mesmo vencendo"
+        ],
+        "novela_reality": [
+          "participante que revela uma ferida antiga e se fecha (usar com MUITO cuidado)",
+          "alguém marcado por um erro exposto publicamente que carrega a culpa em rede nacional"
+        ]
+      }
+    },
+    "exemplos_calibracao": {
+      "historicos_tipicos": [
+        "jogador que carregou a culpa de um erro histórico por anos",
+        "superação de infância dura"
+      ],
+      "atuais": "usar com MUITO cuidado; preferir histórico já elaborado a lance recente sensível"
+    },
+    "subgeracoes_alvo": {
+      "primaria": [
+        "z_ponte"
+      ],
+      "secundaria": [
+        "y_tardio",
+        "x_raiz"
+      ]
+    },
+    "tom_por_subgeracao": {
+      "z_ponte": "verdade sem filtro mas com cuidado, sem dramatizar",
+      "y_tardio": "validação de que a ferida é real, sem expor",
+      "x_raiz": "pela porta da força de quem segurou tudo sozinho a vida inteira"
+    },
+    "linha_alivio_o_premio": [
+      "baixar a guarda não é fraqueza — é coragem de quem cansou de se defender sozinho",
+      "a ferida não foi sua culpa. o que você faz com ela, agora, pode ser sua escolha"
+    ],
+    "cta_emocional": "e se desse pra entender de onde vem essa defesa toda?",
+    "restricoes_eticas": {
+      "nivel_cuidado": "ALTO — revisão obrigatória do colaborador médico antes de publicar",
+      "proibido": [
+        "afirmar que a pessoa TEM trauma",
+        "qualquer jargão clínico",
+        "mostrar/descrever origem de trauma nas imagens ou texto",
+        "dramatizar, sensacionalizar ou usar lance recente sensível sem cuidado",
+        "gatilhos explícitos (violência, abuso)"
+      ],
+      "obrigatorio": [
+        "linguagem universal e cuidadosa (framework Pete Walker 4F como base interna)",
+        "falar da experiência não da condição",
+        "fatos confirmados via Brave",
+        "PASSAR por revisão humana/médica antes do Telegram aprovar publicação"
+      ]
+    }
+  },
+  "hiperfoco": {
+    "id": "hiperfoco",
+    "ref_clinica_interna": "hiperfoco / altas habilidades (AH)",
+    "emocao_nucleo": "a intensidade incompreendida — pensar diferente do resto e ser tratado como defeito",
+    "experiencia_em_linguagem_popular": [
+      "se importar intensamente com coisas que os outros acham bobagem",
+      "ser chamado de 'demais', 'intenso', 'complicado'",
+      "mergulhar fundo em algo e esquecer o resto do mundo",
+      "sentir que ninguém acompanha seu ritmo de pensar",
+      "ser genial numa coisa e perdido em outra"
+    ],
+    "criterio_de_casamento": {
+      "a_dor": "a intensidade incompreendida — sentir/pensar diferente do resto e ser tratado como defeito",
+      "procurar_por_generico": [
+        "talento fora da curva que ninguém entende",
+        "o 'difícil/intenso' que sente num volume que os outros não ouvem",
+        "criatividade absurda que quebra a lógica esperada",
+        "quem o sistema tentou podar por ser diferente"
+      ],
+      "imagem_emocional_central": "quem enxerga o que ninguém viu / o gênio incompreendido pela média",
+      "viradas_canonicas": [
+        "pensar diferente do resto do time não é defeito — é o que ganha jogo",
+        "às vezes o mais 'intenso' é só quem sente o jogo num volume que os outros não ouvem"
+      ],
+      "exemplos_por_pilar": {
+        "futebol": [
+          "craque genial que ninguém entende, jogada que só ele viu",
+          "jogador 'difícil', incompreendido, fora da curva tática",
+          "lance de criatividade absurda que quebra a lógica do jogo",
+          "talento que o sistema tentou podar por ser diferente"
+        ],
+        "musica_popular": [
+          "artista genial rotulado de 'estranho/complicado' que o mercado tentou domar",
+          "obra à frente do tempo que ninguém entendeu na época"
+        ]
+      }
+    },
+    "exemplos_calibracao": {
+      "historicos_tipicos": [
+        "o craque genial e incompreendido",
+        "a jogada que só um cérebro fora da curva enxergou"
+      ],
+      "atuais": "lance de genialidade técnica/criativa da véspera"
+    },
+    "subgeracoes_alvo": {
+      "primaria": [
+        "z_ponte"
+      ],
+      "secundaria": [
+        "z_nativo",
+        "y_tardio"
+      ]
+    },
+    "tom_por_subgeracao": {
+      "z_ponte": "verdade sem filtro, celebrar a diferença como força",
+      "z_nativo": "linguagem de rede, anti-rótulo, atenção à idade",
+      "y_tardio": "validação de quem foi 'o esquisito' e cresceu se achando errado"
+    },
+    "linha_alivio_o_premio": [
+      "sua intensidade nunca foi o problema — faltou quem soubesse ler o seu jogo",
+      "pensar fora da curva cansa quando ninguém entende. mas é também o seu maior talento"
+    ],
+    "cta_emocional": "e se o que chamam de 'demais' em você for justamente a sua força?",
+    "restricoes_eticas": {
+      "nivel_cuidado": "medio",
+      "proibido": [
+        "afirmar que a pessoa TEM altas habilidades",
+        "jargão clínico",
+        "elitismo/superioridade"
+      ],
+      "obrigatorio": [
+        "falar da experiência não da condição",
+        "linguagem coletiva",
+        "fatos confirmados via Brave"
+      ]
+    }
+  },
+  "ahsd": {
+    "id": "ahsd",
+    "ref_clinica_interna": "AHSD — desatenção/dispersão (apresentada como exclusão/não-pertencimento)",
+    "emocao_nucleo": "exclusão e não-pertencimento — o mais diferente do grupo é quem mais se sente sozinho",
+    "experiencia_em_linguagem_popular": [
+      "sentir que nunca se encaixa de verdade em lugar nenhum",
+      "estar no meio de todo mundo e se sentir de fora",
+      "ser tachado de 'avoado', 'desligado', 'preguiçoso'",
+      "começar mil coisas e não terminar, e se cobrar por isso",
+      "achar que tem algo errado com você que os outros não têm"
+    ],
+    "criterio_de_casamento": {
+      "a_dor": "exclusão e não-pertencimento — estar no meio de todos e se sentir de fora; o mais diferente do grupo é quem mais se sente sozinho",
+      "procurar_por_generico": [
+        "quem está no meio de todos e se sente de fora",
+        "o esquecido/à margem do grupo, ninguém olha",
+        "quem não 'encaixa' no molde e se cobra por isso",
+        "quem parece fora de sintonia com o resto"
+      ],
+      "imagem_emocional_central": "quem fica sozinho enquanto o grupo comemora / o que ficou de fora da roda",
+      "viradas_canonicas": [
+        "às vezes o mais diferente do time é quem mais se sente sozinho",
+        "não se encaixar no esquema não quer dizer que você não tem lugar no jogo"
+      ],
+      "exemplos_por_pilar": {
+        "futebol": [
+          "jogador isolado no banco, cabeça baixa, ninguém olha",
+          "reserva esquecido, atleta à margem do grupo",
+          "talento disperso que não 'encaixa' no esquema do técnico",
+          "jogador que parece fora de sintonia com o resto do time"
+        ],
+        "novela_reality": [
+          "participante isolado da 'panela', rejeitado pelo grupo",
+          "o eliminado por rejeição, o que 'nunca se encaixou' na casa"
+        ]
+      }
+    },
+    "exemplos_calibracao": {
+      "historicos_tipicos": [
+        "o reserva esquecido",
+        "o talento que não encaixava no sistema"
+      ],
+      "atuais": "jogador isolado/à margem em jogo da véspera"
+    },
+    "subgeracoes_alvo": {
+      "primaria": [
+        "z_ponte",
+        "z_nativo"
+      ],
+      "secundaria": [
+        "y_tardio"
+      ]
+    },
+    "tom_por_subgeracao": {
+      "z_ponte": "verdade sem filtro, pertencimento, 'você não tá sozinho nisso'",
+      "z_nativo": "linguagem de rede, anti-rótulo de 'preguiça', atenção à idade",
+      "y_tardio": "validação de quem cresceu se sentindo o errado da turma"
+    },
+    "linha_alivio_o_premio": [
+      "não se encaixar não é defeito seu — às vezes é o molde que era apertado demais",
+      "tem gente que passou a vida achando que era 'preguiça'. e nunca foi"
+    ],
+    "cta_emocional": "e se o problema nunca tiver sido você não se encaixar?",
+    "restricoes_eticas": {
+      "nivel_cuidado": "medio",
+      "proibido": [
+        "afirmar que a pessoa TEM TDAH/AHSD",
+        "jargão clínico",
+        "reforçar 'preguiça' como verdade"
+      ],
+      "obrigatorio": [
+        "falar da experiência não da condição",
+        "linguagem coletiva de pertencimento",
+        "fatos confirmados via Brave"
+      ]
+    }
+  },
+  "_angulos_transversais": {
+    "_uso": "ÂNGULOS são camadas aplicáveis SOBRE qualquer perfil — mudam a PORTA DE ENTRADA (gancho/momento/tom), não o perfil em si. O roteirista pode ativar um ângulo quando o contexto pedir.",
+    "madrugada_insonia": {
+      "id": "madrugada_insonia",
+      "descricao": "Público acordado de madrugada consumindo conteúdo de reação (react, lives) porque a cabeça não desliga. A válvula de escape da Lei do Silvio usada pra fugir do perfil não-nomeado.",
+      "porque_e_lead_quente": "guarda baixíssima no horário; a insônia é sintoma transversal que atravessa os 5 perfis; eles JÁ estão no celular vendo conteúdo de companhia passiva",
+      "afinidade_perfis": {
+        "forte": [
+          "ansiedade",
+          "burnout"
+        ],
+        "_motivo": "ansiedade = cabeça em alerta que não desliga; burnout = o cansaço que dormir não cura. Ambos já no núcleo desses perfis.",
+        "aplicavel": [
+          "trauma",
+          "hiperfoco",
+          "ahsd"
+        ],
+        "_motivo_aplicavel": "ruminação (trauma), mente que não para (hiperfoco), também tiram o sono — usar quando couber"
+      },
+      "ganchos_de_entrada": [
+        "3 da manhã e a cabeça ainda no jogo de ontem?",
+        "se você tá lendo isso de madrugada, isso aqui é pra você",
+        "vendo reaction pra não ficar sozinho com seus próprios pensamentos?",
+        "todo mundo dormindo, menos a sua cabeça",
+        "não é o café. não é o celular. é o que ninguém te ensinou a desligar"
+      ],
+      "ponte_futebol_madrugada": "conecta o 'rever o lance mil vezes de madrugada' / 'não conseguir parar de pensar no jogo' com o 'não conseguir desligar a própria cabeça'",
+      "tom": "íntimo, baixo, de cúmplice que também já passou por isso — sussurro, não grito. Mais Fraunces que Anton.",
+      "ajuste_visual_sugerido": "o gancho deste ângulo pode começar MAIS escuro ainda (madrugada literal) e a virada/luz vira o 'amanhecer' — encaixa perfeito na jornada escuro→luz",
+      "nota_operacional_turno_noturno": "DECISÃO PENDENTE do Matheus: publicar à noite exige aprovação noturna via Telegram ou produzir de dia e agendar. Não implementar turno até decidir.",
+      "restricoes_eticas": {
+        "nivel_cuidado": "atenção elevada",
+        "alerta": "madrugada + sofrimento emocional é janela de vulnerabilidade. NUNCA tom alarmista ou que aprofunde a angústia. O ângulo acolhe e oferece nome/saída — nunca amplifica o desespero noturno.",
+        "proibido": [
+          "dramatizar a insônia",
+          "linguagem que aumente a angústia de quem já está mal de madrugada",
+          "qualquer coisa que soe desesperançosa"
+        ]
+      }
+    }
+  }
+}

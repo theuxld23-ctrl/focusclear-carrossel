@@ -1,0 +1,92 @@
+{
+  "_doc": "MATRIZ DE SUBGERAÇÃO — derivada da pesquisa-mãe. Usada pelo SELETOR DE CÉLULA pra decidir subgeração-alvo + como o ROTEIRISTA ajusta tom/linguagem. Idades referentes a 2026. O Z-Ponte é o centro de gravidade: único público que recebe os 5 perfis abertamente e é multiplicador.",
+
+  "pilar_estrategico": "Z-Ponte",
+  "regra_de_ouro": "Carrossel = Instagram/Facebook. Atinge melhor Y (lead quente: mães) e Z-Ponte (pilar). TikTok/Shorts (vídeo) alcançaria Z-Nativo — fora do escopo carrossel.",
+
+  "subgeracoes": {
+    "z_ponte": {
+      "nome": "Z-Ponte — geração de transição",
+      "faixa": "1997–2004 · 22–29 anos",
+      "status": "★ PILAR — alvo principal, centro de gravidade",
+      "marco": "infância analógica (rua, bola, TV) + digital na pré-adolescência. Viveu os dois mundos.",
+      "perfis_que_recebe": "TODOS os 5, abertamente",
+      "onde_achar": ["Instagram", "Reels", "Twitter/X"],
+      "gatilho_de_linguagem": "verdade sem filtro, direto, humor permitido, sem rodeio",
+      "porque_e_pilar": "equilíbrio entre silêncio dos antigos e ruído dos novos; fase de autoconhecimento (22-29); multiplicador (compartilha e indica)",
+      "prioridade_seletor": 1
+    },
+    "y_tardio": {
+      "nome": "Y-Tardio — a promessa quebrada",
+      "faixa": "1989–1996 · 30–37 anos",
+      "status": "LEAD MAIS QUENTE (especialmente mães em dupla/tripla jornada)",
+      "marco": "entrou no mercado já na crise, diploma sem as vagas prometidas",
+      "perfis_que_recebe": "burnout + ansiedade (dominantes), trauma",
+      "onde_achar": ["Instagram", "grupos de maternidade/carreira", "Facebook"],
+      "gatilho_de_linguagem": "alívio da culpa — 'não foi você que falhou, foi a régua que mudou'. Validar exaustão, tirar peso do fracasso pessoal.",
+      "porque_importa": "subcamada que mais somatiza e busca entender o que sente; já fala a língua de saúde mental",
+      "prioridade_seletor": 2
+    },
+    "y_pioneiro": {
+      "nome": "Y-Pioneiro — geração lan house",
+      "faixa": "1981–1988 · 38–45 anos",
+      "marco": "euforia da ascensão dos anos 2000, depois a corda esticou; muitos já são pais",
+      "perfis_que_recebe": "burnout avançado, ansiedade",
+      "onde_achar": ["Instagram", "Facebook", "grupos profissionais"],
+      "gatilho_de_linguagem": "a transição da euforia ao cansaço, 'a conta chegou'",
+      "prioridade_seletor": 3
+    },
+    "z_nativo": {
+      "nome": "Z-Nativo — nascidos na tela",
+      "faixa": "2005–2012 · 14–21 anos",
+      "status": "ATENÇÃO: muitos são menores — cuidado de comunicação e idade",
+      "marco": "banda larga e smartphone como ambiente; comparação como estado permanente",
+      "perfis_que_recebe": "ansiedade, TDAH/AHSD, autoestima — com curadoria de maturidade",
+      "onde_achar": ["TikTok", "Shorts", "Reels"],
+      "gatilho_de_linguagem": "humor, linguagem de rede, verdade sem filtro, anti-rótulo (risco de autodiagnóstico)",
+      "alerta_etico": "parte está fora do alvo direto por idade; nunca conteúdo que incentive autodiagnóstico ou sexualização",
+      "prioridade_seletor": 4
+    },
+    "x_transicao": {
+      "nome": "X-Transição — xennial brasileiro",
+      "faixa": "1974–1980 · 46–52 anos",
+      "marco": "infância analógica, internet (Orkut/MSN) já adultos jovens; convivem com filhos Z que falam de saúde mental",
+      "perfis_que_recebe": "burnout, ansiedade",
+      "onde_achar": ["Facebook", "WhatsApp", "grupos de filhos/escola"],
+      "gatilho_de_linguagem": "pela porta dos filhos ('entenda seu filho') ou permissão suave ('não é frescura')",
+      "prioridade_seletor": 5
+    },
+    "x_raiz": {
+      "nome": "X-Raiz — Coca-Cola pura",
+      "faixa": "1965–1973 · 53–61 anos",
+      "marco": "ditadura na infância, hiperinflação na juventude, 100% analógico; a mais durona",
+      "perfis_que_recebe": "burnout oculto, trauma antigo (mascarados de 'a vida é assim')",
+      "onde_achar": ["Facebook", "WhatsApp", "grupos de igreja/trabalho"],
+      "gatilho_de_linguagem": "pela porta do CORPO (cansaço, insônia, 'nervo') + validação da força de quem segurou tudo. NUNCA porta clínica direta.",
+      "alerta": "terapia ainda cheira a fraqueza; abordagem mais indireta de todas",
+      "prioridade_seletor": 6
+    },
+    "zalpha_alpha": {
+      "nome": "Zalpha / Alpha — horizonte futuro",
+      "faixa": "0–16 anos",
+      "status": "NÃO é público direto — menores",
+      "perfis_que_recebe": "nenhum diretamente",
+      "onde_achar": "via pais (millennials e Z-Ponte)",
+      "gatilho_de_linguagem": "'entenda seu filho — é só agitação ou tem algo mais?' (falado AOS PAIS)",
+      "alerta_etico": "jamais conteúdo direcionado a menores; só alcance via responsáveis",
+      "prioridade_seletor": 9
+    }
+  },
+
+  "logica_para_o_seletor": {
+    "default": "Na dúvida, mirar Z-Ponte (pilar, recebe todos os perfis, multiplicador).",
+    "por_perfil": {
+      "burnout": "preferir Y-Tardio (mães, lead quente) ou Z-Ponte",
+      "ansiedade": "Z-Ponte ou Y-Tardio",
+      "trauma": "Z-Ponte (com cuidado alto) — evitar X e Z-Nativo por sensibilidade",
+      "hiperfoco": "Z-Ponte",
+      "ahsd": "Z-Ponte ou Z-Nativo (atenção idade)"
+    },
+    "regra_canal": "Como o produto é carrossel (Instagram/Facebook), priorizar subgerações desses canais: Z-Ponte, Y-Tardio, Y-Pioneiro. X entra como secundário; Z-Nativo só se o tom couber."
+  }
+}

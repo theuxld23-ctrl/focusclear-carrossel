@@ -1,0 +1,122 @@
+{
+  "_doc": "CALENDÁRIO — Copa do Mundo 2026. Usado pelo SELETOR para: (1) saber a FASE atual (grupos/mata-mata/final) e calibrar a intensidade; (2) saber QUAIS jogos aconteceram 'ontem' para a pesquisa da manhã; (3) impedir alucinação de fase (ex: não buscar pênalti de mata-mata durante fase de grupos). Estrutura macro confirmada via busca; o detalhamento dos 104 jogos deve ser populado de fonte oficial FIFA antes do deploy.",
+  "periodo_total": {
+    "inicio": "2026-06-11",
+    "fim": "2026-07-19",
+    "dias": 39
+  },
+  "fases": [
+    {
+      "fase": "grupos",
+      "inicio": "2026-06-11",
+      "fim": "2026-06-27",
+      "descricao": "12 grupos A–L, cada seleção joga 3 vezes. ~4 jogos/dia. Fase de VOLUME e teste de formatos.",
+      "tipo_emocao_dominante": "estreias, surpresas, azarões segurando favoritos (AHSD), favoritos travando (ansiedade)",
+      "intensidade_producao": "alta — muitos jogos, aprendizado acelerado"
+    },
+    {
+      "fase": "rodada_de_32",
+      "inicio": "2026-06-29",
+      "fim": "2026-07-03",
+      "descricao": "Nova fase mata-mata (32 times) antes das oitavas — exclusiva do formato 48.",
+      "tipo_emocao_dominante": "tudo ou nada começa; eliminações = trauma/superação",
+      "intensidade_producao": "alta, com mais peso de conversão (F2/F3)"
+    },
+    {
+      "fase": "oitavas",
+      "inicio_aprox": "2026-07-04",
+      "fim_aprox": "2026-07-07",
+      "tipo_emocao_dominante": "tensão de mata-mata, pênaltis (ansiedade), heróis e vilões"
+    },
+    {
+      "fase": "quartas",
+      "inicio_aprox": "2026-07-09",
+      "fim_aprox": "2026-07-11",
+      "tipo_emocao_dominante": "peso de carregar um país (burnout), pressão máxima"
+    },
+    {
+      "fase": "semifinais",
+      "inicio_aprox": "2026-07-14",
+      "fim_aprox": "2026-07-15",
+      "tipo_emocao_dominante": "catarse, sonho a um passo, medo de não dar conta"
+    },
+    {
+      "fase": "terceiro_lugar",
+      "data": "2026-07-18",
+      "local": "Miami"
+    },
+    {
+      "fase": "final",
+      "data": "2026-07-19",
+      "local": "Estádio de Nova York",
+      "tipo_emocao_dominante": "pico máximo de atenção do país; catarse coletiva ↔ catarse pessoal",
+      "intensidade_producao": "máxima"
+    },
+    {
+      "fase": "pos_copa_cauda",
+      "inicio": "2026-07-20",
+      "fim_aprox": "2026-08-08",
+      "descricao": "O vazio pós-evento. 'Acabou a Copa e bateu o vazio?' Colher leads aquecidos, migrar para temas perenes.",
+      "tipo_emocao_dominante": "o vazio do fim, a volta à rotina"
+    }
+  ],
+  "marcos_confirmados": {
+    "abertura": {
+      "data": "2026-06-11",
+      "local": "Estádio Azteca, Cidade do México"
+    },
+    "estreia_brasil": {
+      "data": "2026-06-13",
+      "adversario": "Marrocos",
+      "local": "MetLife Stadium"
+    },
+    "final": {
+      "data": "2026-07-19",
+      "local": "Estádio de Nova York"
+    }
+  },
+  "regra_para_seletor": {
+    "como_saber_a_fase": "compare a data atual com os intervalos em 'fases'. A fase define o tipo de emoção esperado e impede alucinação (ex: durante 'grupos', NÃO existe disputa por pênaltis de eliminação).",
+    "pesquisa_da_manha": "buscar resultados da data = (hoje - 1 dia). Validar cada jogo: times na lista de classificados E data dentro do período da Copa.",
+    "anti_alucinacao_de_fase": "se a pesquisa retornar um 'mata-mata/pênalti' mas a data atual está dentro da fase de grupos, é erro de contexto — descartar."
+  },
+  "como_obter_jogos": {
+    "principio": "O sistema NÃO usa calendário hardcoded de 104 jogos. O nó de pesquisa busca os jogos do dia anterior EM TEMPO REAL (SofaScore/Brave). Hardcodar ficaria desatualizado e duplicaria a pesquisa ao vivo.",
+    "uso_do_calendario": "Este arquivo serve pra: (1) o seletor saber a FASE atual pela data (define emoção dominante); (2) a regra anti-alucinação de fase (não buscar pênalti de mata-mata durante grupos).",
+    "janelas_fase_grupos": {
+      "rodada_1": "11-17 de junho 2026",
+      "rodada_2": "18-23 de junho 2026",
+      "rodada_3": "24-27 de junho 2026 (jogos simultâneos por grupo)"
+    }
+  },
+  "jogos_confirmados_exemplo": {
+    "_nota": "Exemplos de jogos reais confirmados (referência). O sistema busca o resto ao vivo — não depende desta lista.",
+    "2026-06-15": [
+      {
+        "jogo": "Espanha 0x0 Cabo Verde",
+        "grupo": "H",
+        "local": "Mercedes-Benz Stadium, Atlanta",
+        "destaque": "estreia histórica de Cabo Verde; Vozinha (40 anos) brilhou"
+      },
+      {
+        "jogo": "Bélgica x Egito",
+        "grupo": "?"
+      },
+      {
+        "jogo": "Arábia Saudita x Uruguai",
+        "grupo": "H",
+        "local": "Miami"
+      },
+      {
+        "jogo": "Irã x Nova Zelândia",
+        "grupo": "?"
+      }
+    ],
+    "2026-06-16": [
+      {
+        "jogo": "França x Senegal",
+        "grupo": "I"
+      }
+    ]
+  }
+}

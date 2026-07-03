@@ -1,0 +1,8 @@
+python-dotenv
+langgraph
+groq
+anthropic
+requests
+playwright
+pillow
+python-telegram-bot

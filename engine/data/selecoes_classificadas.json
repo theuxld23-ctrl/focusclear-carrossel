@@ -1,0 +1,179 @@
+{
+  "_doc": "SELEÇÕES CLASSIFICADAS — Copa do Mundo 2026 (DEFINITIVO — torneio em andamento). ÂNCORA ANTI-ALUCINAÇÃO. O seletor DEVE validar todo jogo contra esta lista: se um time citado NÃO está aqui, o jogo NÃO é da Copa 2026 (provável erro de contexto). As 48 estão definidas — repescagem resolvida em março/2026.",
+  "_uso_seletor": "Antes de aprovar carrossel de jogo atual: ambos os times estão nesta lista? Se não, DESCARTE com motivo 'time fora da Copa 2026'.",
+  "total": 48,
+  "sede": [
+    "Estados Unidos",
+    "México",
+    "Canadá"
+  ],
+  "periodo": "11 de junho a 19 de julho de 2026",
+  "formato": "12 grupos (A–L) de 4; avançam 2 de cada grupo + 8 melhores terceiros = 32 no mata-mata (começa nos 16-avos/32-avos)",
+  "selecoes_por_confederacao": {
+    "anfitrioes": [
+      "Canadá",
+      "Estados Unidos",
+      "México"
+    ],
+    "conmebol": [
+      "Argentina",
+      "Brasil",
+      "Uruguai",
+      "Colômbia",
+      "Equador",
+      "Paraguai"
+    ],
+    "concacaf": [
+      "Curaçao",
+      "Haiti",
+      "Panamá"
+    ],
+    "caf_africa": [
+      "Marrocos",
+      "Argélia",
+      "Egito",
+      "Costa do Marfim",
+      "Tunísia",
+      "África do Sul",
+      "Gana",
+      "Senegal",
+      "Cabo Verde",
+      "RD Congo"
+    ],
+    "afc_asia": [
+      "Irã",
+      "Catar",
+      "Arábia Saudita",
+      "Coreia do Sul",
+      "Japão",
+      "Uzbequistão",
+      "Jordânia",
+      "Austrália",
+      "Iraque"
+    ],
+    "ofc_oceania": [
+      "Nova Zelândia"
+    ],
+    "uefa_europa": [
+      "Inglaterra",
+      "Portugal",
+      "Croácia",
+      "Noruega",
+      "França",
+      "Alemanha",
+      "Holanda",
+      "Áustria",
+      "Bélgica",
+      "Escócia",
+      "Espanha",
+      "Suíça",
+      "Bósnia e Herzegovina",
+      "Suécia",
+      "Turquia",
+      "República Tcheca"
+    ]
+  },
+  "_nota_repescagem_resolvida": "Vagas finais (março/2026): RD Congo (venceu Jamaica) e Iraque (venceu Bolívia) pela intercontinental; Bósnia e Herzegovina (eliminou Itália nos pênaltis 4x1), Suécia, Turquia e República Tcheca pela europeia. Itália ficou de fora pela 3ª vez seguida.",
+  "estreantes": [
+    "Curaçao",
+    "Cabo Verde",
+    "Uzbequistão",
+    "Jordânia"
+  ],
+  "ausencias_notaveis": [
+    "Itália",
+    "Chile",
+    "Camarões",
+    "Costa Rica",
+    "Dinamarca",
+    "Nigéria",
+    "Polônia",
+    "Sérvia"
+  ],
+  "grupos": {
+    "_nota": "12 grupos do sorteio oficial (5/dez/2025, Washington). Confirmados via fontes cruzadas (olympics.com, diariodecuyo, gazeta). Anfitriões fixos: México A1, Canadá B1, EUA D1. Vagas de playoff europeu (Bósnia/Suécia/Turquia/Tchéquia) distribuídas em A/B/D/F — A=Tchéquia e F=Suécia confirmados; B e D recebem as outras duas (Bósnia/Turquia) — confirmar atribuição exata B vs D na fonte oficial FIFA.",
+    "A": [
+      "México",
+      "África do Sul",
+      "Coreia do Sul",
+      "República Tcheca"
+    ],
+    "B": [
+      "Canadá",
+      "Suíça",
+      "Catar",
+      "Bósnia e Herzegovina"
+    ],
+    "C": [
+      "Brasil",
+      "Marrocos",
+      "Escócia",
+      "Haiti"
+    ],
+    "D": [
+      "Estados Unidos",
+      "Paraguai",
+      "Austrália",
+      "Turquia"
+    ],
+    "E": [
+      "Alemanha",
+      "Curaçao",
+      "Costa do Marfim",
+      "Equador"
+    ],
+    "F": [
+      "Holanda",
+      "Japão",
+      "Suécia",
+      "Tunísia"
+    ],
+    "G": [
+      "Bélgica",
+      "Egito",
+      "Irã",
+      "Nova Zelândia"
+    ],
+    "H": [
+      "Espanha",
+      "Cabo Verde",
+      "Arábia Saudita",
+      "Uruguai"
+    ],
+    "I": [
+      "França",
+      "Senegal",
+      "Iraque",
+      "Noruega"
+    ],
+    "J": [
+      "Argentina",
+      "Argélia",
+      "Áustria",
+      "Jordânia"
+    ],
+    "K": [
+      "Portugal",
+      "Colômbia",
+      "Uzbequistão",
+      "RD Congo"
+    ],
+    "L": [
+      "Inglaterra",
+      "Croácia",
+      "Gana",
+      "Panamá"
+    ]
+  },
+  "fatos_ancora": {
+    "brasil_grupo": "C, com Marrocos, Escócia e Haiti",
+    "brasil_estreia": "13 de junho de 2026 contra Marrocos, no MetLife Stadium",
+    "abertura": "11 de junho, 16h BRT, Estádio Azteca (Cidade do México)",
+    "final": "19 de julho, 16h BRT, MetLife Stadium (Nova York)",
+    "terceiro_lugar": "18 de julho, Miami",
+    "total_jogos": 104,
+    "atual_campea": "Argentina (2022)",
+    "maior_campea": "Brasil (5 títulos)",
+    "fato_marcante": "Itália fora pela 3ª Copa seguida (inédito); Cabo Verde, Curaçao, Uzbequistão e Jordânia estreantes"
+  }
+}

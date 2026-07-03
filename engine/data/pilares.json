@@ -1,0 +1,49 @@
+{
+  "_doc": "PILARES DE CONTEÚDO — o sistema não é mais só futebol. Cada pilar é uma FONTE de momentos com carga emocional. O motor (seletor→roteirista→cascata→compositor) é AGNÓSTICO de pilar. Futebol virou UM caso. Adicionar pilar = adicionar entrada aqui + fonte de pesquisa, sem mexer no motor.",
+  "_como_usar": "O state carrega 'pilar_ativo'. O nó de pesquisa usa as fontes do pilar. O seletor usa o criterio_de_casamento genérico (ponte_emocional.json) + a ancora_factual do pilar. Rotação evita saturação e cobre o ano.",
+  "pilares": {
+    "futebol": {
+      "nome": "Futebol", "status": "ativo", "prioridade": 1,
+      "descricao": "Copa 2026 até 19/jul; depois clubes (Brasileirão, Libertadores, Champions, Premier — CazéTV de graça, público pop presente).",
+      "ancora_factual": "selecoes_classificadas.json (Copa) / competicoes_clubes.json (pós-Copa, a criar)",
+      "fontes_pesquisa": ["Brave: resultado + narrativa", "GE, ESPN, CNN, CazéTV"],
+      "tipo_momento": "jogos do dia anterior (newsjacking) + históricos (transgeracional)",
+      "carga_emocional": "derrota, virada, azarão, pressão, superação, choro, redenção",
+      "validade": "Copa 11/jun-19/jul/2026; clubes ano todo", "cuidado": "baixo"
+    },
+    "novela_reality": {
+      "nome": "Novela e Reality", "status": "planejado", "prioridade": 2,
+      "descricao": "BBB (jan-abr), novela das nove, realities. Máquina diária de emoção do público C/D/E.",
+      "ancora_factual": "elenco/personagens do programa vigente (a criar por temporada)",
+      "fontes_pesquisa": ["Brave: repercussão", "Gshow, TV Foco, Notícias da TV"],
+      "tipo_momento": "acontecimento do dia (paredão, briga, DR) + arco de personagem",
+      "carga_emocional": "exclusão (paredão=rejeição pública), ansiedade, julgamento, pertencer/não pertencer",
+      "validade": "BBB jan-abr; novelas ano todo",
+      "cuidado": "medio — falar da EMOÇÃO que o público projeta, não atacar o participante real"
+    },
+    "musica_popular": {
+      "nome": "Música Popular", "status": "planejado", "prioridade": 3,
+      "descricao": "Sertanejo, pagode, funk. As letras JÁ SÃO dor emocional nomeada. Lançamento viral = gancho instantâneo.",
+      "ancora_factual": "lançamentos/charts reais (validar por busca)",
+      "fontes_pesquisa": ["Brave: lançamento", "Spotify Brasil, YouTube trending"],
+      "tipo_momento": "lançamento viral + música que voltou a bombar",
+      "carga_emocional": "término, saudade, superação, recomeço, autoestima",
+      "validade": "ano todo",
+      "cuidado": "baixo — NÃO reproduzir letra literal (direito autoral); usar o TEMA/emoção"
+    },
+    "datas_sazonais": {
+      "nome": "Datas e Sazonais", "status": "planejado", "prioridade": 4,
+      "descricao": "Natal, Ano Novo, Dia das Mães/Pais. Previsíveis, agendáveis, transgeracionais.",
+      "ancora_factual": "a própria data",
+      "fontes_pesquisa": ["calendário fixo + Brave pro ângulo do ano"],
+      "tipo_momento": "a data e a emoção não-dita dela",
+      "carga_emocional": "Natal sozinho, ansiedade de retrospectiva, Dia das Mães com ausência, pressão de recomeço",
+      "validade": "agendada por data",
+      "cuidado": "medio — datas mexem com luto/solidão; acolher, nunca romantizar a dor"
+    }
+  },
+  "rotacao": {
+    "principio": "Não saturar um pilar. Alternar cobre o ano. Copa é intensa e temporária (acaba 19/jul) — aproveitar o pico e já preparar o pilar 2 pra não secar em 20/jul.",
+    "regra_seletor": "Pilar ativo vem no state. Em transição (ex: fim da Copa), pode rodar 2 pilares até um assumir."
+  }
+}
