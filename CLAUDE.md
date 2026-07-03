@@ -4,12 +4,14 @@ Sistema autônomo que gera carrosséis de Instagram sobre futebol que funcionam 
 
 ## STATUS DA MIGRAÇÃO
 - Data: 2026-07-03
-- Etapas concluídas no VPS: ETAPA 0 ✅, ETAPA 1 ✅
-- Testes passando: test_data ✅, test_pesquisa ✅ (modo offline)
-- SofaScore: bloqueado no VPS (IP datacenter) — testar no Mac (IP residencial)
-- BRAVE_API_KEY: pendente (configurar no Mac)
-- Próxima fase: Fase 1 — Backend como serviço (FastAPI + SQLite)
-- Máquina destino: Mac Mini M4, macOS Tahoe
+- Máquina principal: Mac Mini M4, macOS Tahoe
+- VPS: permanece ativa (outros projetos — não desligar)
+- Ambiente: venv Python 3.14.5, deps do requirements.lock.txt
+- Testes offline: ETAPA 0 ✅  ETAPA 1 ✅
+- SofaScore: BLOQUEADO (HTTP 403 mesmo em IP residencial) — Brave permanece como fonte principal
+- Palmier Pro: v0.5.2 instalado, MCP http://127.0.0.1:19789/mcp (endpoint JSON-RPC via POST; `/mcp/health` não existe nesta versão)
+- APIs: pendentes — .env criado vazio
+- Próxima: Fase 1 — Backend como serviço (FastAPI + SQLite)
 
 ## Ambiente (venv)
 
