@@ -16,6 +16,7 @@ from engine.nodes.seletor import selecionar
 from engine.nodes.roteirista import escrever_roteiro
 from engine.nodes.resolve_imagens import resolve_imagens
 from engine.nodes.compositor import compor
+from engine.nodes.telegram import notificar_telegram
 
 
 def criar_job(db: Session, workspace_id: str, pilar: str, formato: str,
@@ -65,6 +66,8 @@ def executar_job(job_id: str):
         state = escrever_roteiro(state)
         state = resolve_imagens(state)
         state = compor(state)
+        # Notificação Telegram (bônus): pula em silêncio se as chaves não existem
+        state = notificar_telegram(state)
 
         # Um Asset tipo "slide" por PNG gerado
         prontos = state.get("carrosseis_prontos", [])

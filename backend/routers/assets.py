@@ -1,14 +1,38 @@
-"""Endpoints de assets — listar e atualizar status de aprovação."""
+"""Endpoints de assets — listar, atualizar status e servir o PNG do slide."""
+from pathlib import Path
+
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
+
 from backend.database import get_db, Asset
+from config import OUTPUT
 
 router = APIRouter(prefix="/assets", tags=["assets"])
+
+_OUTPUT_ROOT = OUTPUT.resolve()
 
 
 @router.get("/")
 def listar_assets(workspace_id: str = "focusclear", db: Session = Depends(get_db)):
     return db.query(Asset).filter_by(workspace_id=workspace_id).order_by(Asset.criado_em.desc()).limit(100).all()
+
+
+@router.get("/{asset_id}/image")
+def servir_imagem(asset_id: str, db: Session = Depends(get_db)):
+    """Serve o PNG do asset por FILE PATH (sem upload externo).
+
+    Só serve arquivos DENTRO de engine/output/ — barra path traversal.
+    """
+    asset = db.query(Asset).filter_by(id=asset_id).first()
+    if not asset or not asset.caminho:
+        raise HTTPException(404, "Asset sem imagem")
+    caminho = Path(asset.caminho).resolve()
+    if _OUTPUT_ROOT not in caminho.parents:
+        raise HTTPException(403, "Caminho fora de engine/output")
+    if not caminho.is_file():
+        raise HTTPException(404, "PNG não encontrado no disco")
+    return FileResponse(caminho, media_type="image/png")
 
 
 @router.patch("/{asset_id}/status")

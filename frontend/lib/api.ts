@@ -83,3 +83,8 @@ export function atualizarStatusAsset(id: string, status: AssetStatus) {
     { method: 'PATCH' },
   )
 }
+
+// URL do PNG do slide (servido por file path pelo backend via rewrite).
+export function imagemAssetUrl(id: string): string {
+  return `${BASE}/assets/${id}/image`
+}
