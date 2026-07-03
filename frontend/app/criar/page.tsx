@@ -7,7 +7,7 @@ import { tempoDecorrido } from '@/lib/format'
 
 const PILARES = [
   { value: 'futebol', label: 'Futebol', ativo: true },
-  { value: 'novela_reality', label: 'Novela e Reality', ativo: false },
+  { value: 'cultura_pop', label: 'Cultura Pop / Fofoca', ativo: false },
   { value: 'musica_popular', label: 'Música Popular', ativo: false },
   { value: 'datas_sazonais', label: 'Datas e Sazonais', ativo: false },
 ]

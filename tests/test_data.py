@@ -21,7 +21,7 @@ from config import DATA  # noqa: E402
 PERFIS_ESPERADOS = {"ansiedade", "burnout", "trauma", "hiperfoco", "ahsd"}
 SELECOES_PROIBIDAS = {"Itália", "Nigéria", "Chile"}
 TOTAL_SELECOES = 48
-PILARES_ESPERADOS = {"futebol", "novela_reality", "musica_popular", "datas_sazonais"}
+PILARES_ESPERADOS = {"futebol", "cultura_pop", "musica_popular", "datas_sazonais"}
 
 
 def _load(name: str):

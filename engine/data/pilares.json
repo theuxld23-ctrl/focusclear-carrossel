@@ -11,15 +11,15 @@
       "carga_emocional": "derrota, virada, azarão, pressão, superação, choro, redenção",
       "validade": "Copa 11/jun-19/jul/2026; clubes ano todo", "cuidado": "baixo"
     },
-    "novela_reality": {
-      "nome": "Novela e Reality", "status": "planejado", "prioridade": 2,
-      "descricao": "BBB (jan-abr), novela das nove, realities. Máquina diária de emoção do público C/D/E.",
+    "cultura_pop": {
+      "nome": "Cultura Pop / Fofoca", "status": "planejado", "prioridade": 2,
+      "descricao": "Polêmicas de influencers, dramas de canais (Aqueles Caras, Peixinho), páginas de fofoca, BBB. Engajamento PARTICIPATIVO — pessoa tem opinião forte, quer comentar e compartilhar.",
       "ancora_factual": "elenco/personagens do programa vigente (a criar por temporada)",
-      "fontes_pesquisa": ["Brave: repercussão", "Gshow, TV Foco, Notícias da TV"],
+      "fontes_pesquisa": ["Brave: polêmica + repercussão", "páginas de fofoca, YouTube drama"],
       "tipo_momento": "acontecimento do dia (paredão, briga, DR) + arco de personagem",
-      "carga_emocional": "exclusão (paredão=rejeição pública), ansiedade, julgamento, pertencer/não pertencer",
+      "carga_emocional": "exclusão, julgamento público, ansiedade de pertencer, validação",
       "validade": "BBB jan-abr; novelas ano todo",
-      "cuidado": "medio — falar da EMOÇÃO que o público projeta, não atacar o participante real"
+      "cuidado": "alto — falar da EMOÇÃO que o público projeta, não atacar a pessoa real. Novela entra como subpilar (público mais específico, menor engajamento digital)"
     },
     "musica_popular": {
       "nome": "Música Popular", "status": "planejado", "prioridade": 3,

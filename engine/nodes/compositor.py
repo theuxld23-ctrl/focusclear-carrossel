@@ -2,7 +2,7 @@
 
 Jornada escuro→luz em 8 (ou 6) slides. Tipografia Big Shoulders Display (display)
 + Young Serif (virada/sub), fontes EMBUTIDAS em base64 (render 100% offline).
-Paleta brasa: brasa-noite #0D0B0F, refletor #F2EBDD, brasa #E8472B, pele #E3A87C.
+Paleta brasa: brasa-noite #0D0B0F, refletor #F2EBDD, brasa #FF5436, pele #E3A87C.
 
 Safe-zone: todo texto crítico fica no quadrado central 1080×1080 (135px de respiro
 no topo e na base) — no grid do perfil o 4:5 é cortado pra esse centro.
@@ -141,7 +141,7 @@ def build_html(slide: dict) -> str:
     .slide.luz {{ background:#F2EBDD; --fg:#0D0B0F; --sub:#9a4a34; }}
     .bg {{ position:absolute; inset:0; background-size:cover; background-position:center; }}
     .bg.tipografico {{ background:
-        radial-gradient(120% 80% at 50% 18%, rgba(232,71,43,.18), transparent 60%); }}
+        radial-gradient(120% 80% at 50% 18%, rgba(255,84,54,.18), transparent 60%); }}
     .scrim {{ position:absolute; inset:0; }}
     .escuro .scrim {{ background:linear-gradient(180deg, rgba(13,11,15,.20) 0%, rgba(13,11,15,.55) 45%, rgba(13,11,15,.94) 100%); }}
     .transicao .scrim {{ background:linear-gradient(180deg, rgba(13,11,15,.15) 0%, rgba(42,26,22,.55) 50%, rgba(13,11,15,.90) 100%); }}
@@ -150,19 +150,19 @@ def build_html(slide: dict) -> str:
       padding:64px 72px; display:flex; flex-direction:column; justify-content:space-between; }}
     .topo {{ display:flex; justify-content:space-between; align-items:flex-start; }}
     .kicker {{ font-weight:700; font-size:26px; letter-spacing:.18em; text-transform:uppercase;
-      color:#E8472B; }}
+      color:#FF5436; }}
     .contador {{ font-weight:700; font-size:24px; letter-spacing:.1em; color:var(--sub); opacity:.8; }}
     .fundo {{ display:flex; flex-direction:column; gap:26px; }}
     .headline {{ font-weight:800; font-size:{fs}px; line-height:.94; text-transform:uppercase;
       color:var(--fg); letter-spacing:-.01em; }}
-    .headline .brasa {{ color:#E8472B; }}
+    .headline .brasa {{ color:#FF5436; }}
     .sub {{ font-family:'Young Serif',Georgia,serif; font-size:34px; line-height:1.28; color:var(--sub); max-width:820px; }}
     .opcoes {{ display:flex; flex-direction:column; gap:16px; margin-top:8px; }}
     .pill {{ font-weight:700; font-size:34px; text-transform:uppercase; color:var(--fg);
-      border:2px solid rgba(232,71,43,.55); border-radius:16px; padding:18px 26px; }}
+      border:2px solid rgba(255,84,54,.55); border-radius:16px; padding:18px 26px; }}
     .marca {{ font-family:'Young Serif',serif; font-size:28px; color:var(--sub); margin-top:6px; }}
     .microcta {{ font-family:'Young Serif',serif; font-size:26px; color:var(--sub); }}
-    .handle {{ font-weight:800; font-size:56px; color:#E8472B; letter-spacing:.02em; }}
+    .handle {{ font-weight:800; font-size:56px; color:#FF5436; letter-spacing:.02em; }}
     </style></head><body>
     <div class="slide {grupo}">
       {camada_bg}
