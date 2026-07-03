@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: #0d0d10;
+}
+
+/* Scrollbar discreta no tema carbon */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #31313c #0d0d10;
+}
+
+@layer utilities {
+  .card {
+    @apply rounded-xl border border-carbon-600 bg-carbon-800/70 backdrop-blur-sm;
+  }
+  .input {
+    @apply w-full rounded-lg border border-carbon-600 bg-carbon-900 px-3.5 py-2.5 text-sm text-neutral-100 outline-none transition-colors placeholder:text-neutral-600 focus:border-electric focus:ring-1 focus:ring-electric;
+  }
+  .label {
+    @apply mb-1.5 block font-display text-xs font-medium uppercase tracking-wider text-neutral-400;
+  }
+}
