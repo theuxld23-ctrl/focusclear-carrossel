@@ -20,6 +20,7 @@ from config import DATA, get_llm
 
 _SYSTEM_PROMPT = DATA / "prompts" / "seletor.md"
 _SELECOES = DATA / "selecoes_classificadas.json"
+_CLUBES = DATA / "competicoes_clubes.json"
 
 
 def _norm(s: str) -> str:
@@ -38,8 +39,28 @@ def selecoes_validas() -> set[str]:
     return {_norm(n) for n in nomes}
 
 
+def clubes_validos() -> set[str]:
+    """Conjunto normalizado dos clubes reais (competicoes_clubes.json) — âncora do
+    futebol PÓS-COPA. Pronta pro pivô: passe-a via `validar_factual(ancora=...)`
+    quando a Copa acabar; o pipeline atual segue usando `selecoes_validas()`."""
+    d = json.loads(_CLUBES.read_text(encoding="utf-8"))
+    nomes: list[str] = []
+    for comp in (d.get("competicoes") or {}).values():
+        for c in comp.get("clubes", []):
+            if isinstance(c, str):
+                nomes.append(c)
+    return {_norm(n) for n in nomes}
+
+
+# Consenso mínimo (fontes distintas da Brave) p/ um momento de pilar sem lista fixa
+# ser aceito. É a âncora anti-alucinação desses pilares: o fato vem da PESQUISA
+# (múltiplas fontes concordando), nunca da memória do LLM.
+_MIN_FONTES_CONSENSO = 2
+
+
 def validar_factual(
-    jogos: list[dict], ancora: Optional[set[str]] = None, pilar: str = "futebol"
+    jogos: list[dict], ancora: Optional[set[str]] = None, pilar: str = "futebol",
+    min_fontes: int = _MIN_FONTES_CONSENSO,
 ) -> tuple[list[dict], list[dict]]:
     """CAMADA DE CÓDIGO. Separa jogos/momentos válidos dos descartados por fato.
 
@@ -47,19 +68,30 @@ def validar_factual(
     Quem não estiver → descartado ("time fora da Copa 2026"): erro real é confundir
     jogo de eliminatória/amistoso (ex. Nigéria, que não está na Copa) com jogo da Copa.
 
-    Outros pilares: a âncora factual ainda não é uma lista fechada (ex. cultura_pop =
-    elenco por temporada, a criar). Sem lista, não há como descartar em código —
-    aceita momentos com conteúdo e descarta só os vazios. O julgamento fica com o LLM.
+    Outros pilares (cultura pop, música, datas): NÃO há lista fechada — a âncora é o
+    CONSENSO MULTI-FONTE. O momento (nome/evento/música) só passa se veio confirmado
+    por ≥ `min_fontes` fontes DISTINTAS da Brave (`fontes_concordam`/`n_fontes`, do
+    `pesquisa_pilar`). Fonte única = provável ruído/alucinação → descarta. Assim a
+    anti-alucinação continua valendo mesmo sem lista, só troca lista fixa por consenso.
     """
     if pilar != "futebol":
         validos: list[dict] = []
         descartados: list[dict] = []
         for jogo in jogos:
             momento = (jogo.get("momento") or jogo.get("fatos_duros") or "").strip()
-            if momento:
+            if not momento:
+                descartados.append({"momento": str(jogo)[:60], "motivo": "momento vazio"})
+                continue
+            n = jogo.get("n_fontes")
+            if n is None:
+                n = len(jogo.get("fontes_dados") or [])
+            if jogo.get("fontes_concordam") or n >= min_fontes:
                 validos.append(jogo)
             else:
-                descartados.append({"momento": str(jogo)[:60], "motivo": "momento vazio"})
+                descartados.append({
+                    "momento": momento[:60],
+                    "motivo": f"sem consenso multi-fonte (só {n} fonte) — anti-alucinação",
+                })
         return validos, descartados
 
     ancora = ancora if ancora is not None else selecoes_validas()

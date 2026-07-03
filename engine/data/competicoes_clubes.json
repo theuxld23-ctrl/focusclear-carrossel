@@ -1,0 +1,46 @@
+{
+  "_doc": "ÂNCORA FACTUAL do pilar futebol para o PÓS-COPA (a Copa acaba 19/jul/2026; o pilar pivota para clubes). Mesma função de selecoes_classificadas.json: o seletor confere que os clubes citados existem nesta lista antes do LLM (anti-alucinação). NÃO está no caminho de produção ainda — o pipeline de futebol usa selecoes_classificadas.json durante a Copa. Trocar a âncora quando a Copa terminar (ver CLAUDE.md / pilares.json).",
+  "_como_usar": "Uniao de todos os 'clubes' das competicoes = conjunto válido. selecionar(pilar='futebol') pode passar essa âncora via validar_factual(ancora=clubes_de_clubes()) quando pilar_config apontar pra cá.",
+  "competicoes": {
+    "brasileirao": {
+      "nome": "Brasileirão Série A",
+      "fonte_gratuita": "Globo/Premiere/CazéTV (jogos selecionados)",
+      "clubes": [
+        "Flamengo", "Palmeiras", "São Paulo", "Corinthians", "Fluminense",
+        "Botafogo", "Vasco da Gama", "Grêmio", "Internacional", "Atlético Mineiro",
+        "Cruzeiro", "Bahia", "Fortaleza", "Ceará", "Vitória", "Santos",
+        "Red Bull Bragantino", "Juventude", "Mirassol", "Sport Recife"
+      ]
+    },
+    "libertadores": {
+      "nome": "CONMEBOL Libertadores",
+      "fonte_gratuita": "Paramount+/ESPN; CazéTV em jogos pontuais",
+      "clubes": [
+        "Flamengo", "Palmeiras", "Fluminense", "Botafogo", "São Paulo",
+        "Internacional", "Grêmio", "Atlético Mineiro", "River Plate", "Boca Juniors",
+        "Racing", "Estudiantes", "Peñarol", "Nacional", "Colo-Colo",
+        "Universitario", "LDU", "Olimpia", "Cerro Porteño", "Bolívar",
+        "Atlético Nacional", "Independiente del Valle"
+      ]
+    },
+    "champions": {
+      "nome": "UEFA Champions League",
+      "fonte_gratuita": "TNT/Max; CazéTV em jogos pontuais",
+      "clubes": [
+        "Real Madrid", "Barcelona", "Manchester City", "Liverpool", "Arsenal",
+        "Bayern de Munique", "Borussia Dortmund", "Paris Saint-Germain", "Inter de Milão",
+        "Milan", "Juventus", "Napoli", "Atlético de Madrid", "Chelsea",
+        "Bayer Leverkusen", "RB Leipzig", "Benfica", "Porto", "Sporting", "PSV"
+      ]
+    },
+    "premier": {
+      "nome": "Premier League",
+      "fonte_gratuita": "ESPN/Disney+",
+      "clubes": [
+        "Manchester City", "Arsenal", "Liverpool", "Manchester United", "Chelsea",
+        "Tottenham", "Newcastle", "Aston Villa", "Brighton", "West Ham",
+        "Everton", "Nottingham Forest", "Crystal Palace", "Fulham", "Brentford", "Wolverhampton"
+      ]
+    }
+  }
+}

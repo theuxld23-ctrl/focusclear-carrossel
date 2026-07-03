@@ -62,14 +62,29 @@ _FONTES_CONFIAVEIS: dict[str, str] = {
     "lance.com.br": "lance",
 }
 
-# Fontes confiáveis POR PILAR (domínio→rótulo). v1: só 'futebol' ativo/usado no
-# caminho de produção. Adicionar um pilar = registrar seu mapa aqui (os rótulos
-# batem com pilar_config['fontes_pesquisa']['confiaveis'] em pilares.json).
+# Fontes confiáveis POR PILAR (domínio→rótulo). Elas dão o CONSENSO multi-fonte que
+# é a âncora anti-alucinação dos pilares sem lista fixa (ver docstring de
+# pesquisa_pilar): um nome/evento só "conta" se aparecer em fontes distintas.
+_FONTES_CULTURA_POP: dict[str, str] = {
+    "metropoles.com": "metropoles", "gshow.globo.com": "gshow", "quem.globo.com": "quem",
+    "otvfoco.com.br": "tvfoco", "purepeople.com.br": "purepeople", "uol.com.br": "uol",
+    "terra.com.br": "terra", "hugogloss": "hugogloss", "contigo": "contigo",
+    "g1.globo.com": "g1", "youtube.com": "youtube",
+}
+_FONTES_MUSICA: dict[str, str] = {
+    "billboard.com.br": "billboard", "billboard.com": "billboard", "spotify.com": "spotify",
+    "letras.mus.br": "letras", "genius.com": "genius", "rollingstone.com.br": "rollingstone",
+    "tenhomaisdiscos": "tmdqa", "g1.globo.com": "g1", "uol.com.br": "uol", "youtube.com": "youtube",
+}
+_FONTES_DATAS: dict[str, str] = {
+    "g1.globo.com": "g1", "agenciabrasil.ebc.com.br": "agenciabrasil", "gov.br": "gov",
+    "cnnbrasil.com": "cnn", "uol.com.br": "uol", "terra.com.br": "terra", "bbc.com": "bbc",
+}
 _FONTES_POR_PILAR: dict[str, dict[str, str]] = {
     "futebol": _FONTES_CONFIAVEIS,
-    # "novela_reality": {"gshow.globo.com": "gshow", "otvfoco.com.br": "tvfoco", ...},
-    # "musica_popular":  {"genius.com": "genius", "letras.mus.br": "letras", ...},
-    # "datas_sazonais":  {"g1.globo.com": "g1", "agenciabrasil.ebc.com.br": "agenciabrasil", ...},
+    "cultura_pop": _FONTES_CULTURA_POP,
+    "musica_popular": _FONTES_MUSICA,
+    "datas_sazonais": _FONTES_DATAS,
 }
 
 
@@ -81,18 +96,24 @@ def fontes_do_pilar(pilar_ativo: str = "futebol") -> dict[str, str]:
 # Queries de MOMENTO por pilar não-futebol (slug de pilares.json). Se o pilar não
 # estiver aqui, deriva do próprio config do pilar (carga_emocional/tipo_momento).
 _QUERIES_MOMENTO_POR_PILAR: dict[str, list[str]] = {
+    # Fofoca / drama de criadores: cancelamento, treta, BBB, affair/término de famosos.
     "cultura_pop": [
-        "polêmica influencer repercussão hoje Brasil",
-        "treta canal YouTube assunto do dia hoje",
-        "BBB paredão briga repercussão hoje",
+        "influencer cancelado polêmica repercussão hoje Brasil",
+        "treta briga entre criadores YouTube assunto do dia hoje",
+        "BBB paredão eliminação repercussão hoje",
+        "término affair famosos fofoca repercussão hoje",
     ],
+    # Charts / lançamentos: música que bombou, letra que viralizou.
     "musica_popular": [
-        "música viral hoje Brasil sertanejo funk pagode",
-        "lançamento música repercussão emoção hoje",
+        "música que mais tocou hoje Brasil sertanejo funk pagode paradas",
+        "lançamento música viral repercussão hoje",
+        "letra música término saudade viralizou hoje Brasil",
     ],
+    # A própria data + o ângulo emocional do ano.
     "datas_sazonais": [
-        "data comemorativa próxima Brasil emoção",
-        "campanha sazonal assunto do momento sentimento",
+        "próxima data comemorativa Brasil o que a gente sente",
+        "Natal Ano Novo Dia das Mães ângulo emocional solidão retrospectiva hoje",
+        "campanha sazonal assunto do momento sentimento este ano",
     ],
 }
 
@@ -133,6 +154,13 @@ def _dominio_confiavel(url: str, fontes: Optional[dict[str, str]] = None) -> Opt
         if chave in u:
             return rotulo
     return None
+
+
+def _dominio_de(url: str) -> str:
+    """Host da URL (sem www), p/ contar fontes DISTINTAS no consenso multi-fonte."""
+    from urllib.parse import urlparse
+    net = urlparse(url or "").netloc.lower()
+    return net[4:] if net.startswith("www.") else net
 
 
 # placar entre dois times (qualquer ordem); retorna sempre na ordem (t1, t2).
@@ -442,16 +470,22 @@ def pesquisa_pilar(
 ) -> dict:
     """Momentos com carga emocional de um pilar NÃO-futebol (genérico).
 
-    Lê pilar_ativo/pilar_config do state, roda as queries do pilar na Brave e
-    extrai 'momentos' (entidades + narrativa dos snippets). Popula
-    `jogos_pesquisados` no MESMO formato consumido pelo seletor — só que sem
-    times (a validação factual do seletor é pilar-aware). Costura injetável
-    `buscar(query) -> list[snippets]` permite testar sem rede.
+    ÂNCORA POR CONSENSO (anti-alucinação sem lista fixa): pilares como cultura pop,
+    música e datas não têm lista fechada (influencers/músicas mudam toda semana).
+    Então a âncora é a REGRA: cada momento carrega quantas FONTES DISTINTAS da Brave
+    o confirmaram (`n_fontes` = domínios únicos; `fontes_confiaveis` = os do mapa do
+    pilar) e `fontes_concordam` (≥2 fontes). O seletor descarta quem não tem consenso
+    — o fato vem da pesquisa, nunca da memória do LLM.
+
+    Lê pilar_ativo/pilar_config do state, roda as queries do pilar (`queries_do_pilar`)
+    na Brave e extrai 'momentos' (entidades + narrativa). Popula `jogos_pesquisados`
+    no mesmo formato do seletor, sem times. Costura `buscar(query)->snippets` p/ teste.
     """
     from engine.nodes.coletor_tendencias import extrair_candidatos  # reuso do NER
 
     pilar = state.get("pilar_ativo", "futebol")
     cfg = state.get("pilar_config") or {}
+    fontes_pilar = fontes_do_pilar(pilar)  # domínio→rótulo do pilar (bônus de confiança)
     state.setdefault("data", _hoje_iso())
     state.setdefault("fase_copa", "")
     erros = state.setdefault("erros", [])
@@ -461,7 +495,8 @@ def pesquisa_pilar(
 
     buscar = buscar or _buscar_default
 
-    agrega: dict[str, dict[str, Any]] = {}  # momento_norm -> {momento, ocorr, narrativa, urls}
+    # momento_norm -> {momento, ocorr, narrativa, urls, dominios(set), confiaveis(set)}
+    agrega: dict[str, dict[str, Any]] = {}
     for q in queries_do_pilar(pilar, cfg):
         try:
             snippets = buscar(q)
@@ -470,20 +505,33 @@ def pesquisa_pilar(
             continue
         for s in snippets:
             url = s.get("url") or s.get("link") or ""
+            dominio = _dominio_de(url)
+            rotulo = _dominio_confiavel(url, fontes_pilar)
             texto = f"{s.get('title', '')} {s.get('description', '')}".strip()
             desc = (s.get("description") or "").strip()
             for termo in extrair_candidatos(texto):
                 ch = _norm(termo)
-                d = agrega.setdefault(ch, {"momento": termo, "ocorr": 0, "narrativa": "", "urls": []})
+                d = agrega.setdefault(ch, {"momento": termo, "ocorr": 0, "narrativa": "",
+                                           "urls": [], "dominios": set(), "confiaveis": set()})
                 d["ocorr"] += 1
+                if dominio:
+                    d["dominios"].add(dominio)
+                if rotulo:
+                    d["confiaveis"].add(rotulo)
                 if not d["narrativa"] and desc:
                     d["narrativa"] = desc
                 if url and url not in d["urls"]:
                     d["urls"].append(url)
 
-    ranq = sorted(agrega.values(), key=lambda d: d["ocorr"], reverse=True)[:top]
+    # Ranqueia por CONSENSO primeiro: nº de fontes distintas > fontes confiáveis > ocorrências.
+    ranq = sorted(
+        agrega.values(),
+        key=lambda d: (len(d["dominios"]), len(d["confiaveis"]), d["ocorr"]),
+        reverse=True,
+    )[:top]
     momentos: list[Jogo] = []
     for d in ranq:
+        n_fontes = len(d["dominios"])
         momentos.append({
             "times": [],
             "momento": d["momento"],
@@ -492,9 +540,11 @@ def pesquisa_pilar(
             "fatos_duros": d["momento"],
             "narrativa": d["narrativa"],
             "fonte": ["brave"],
-            "fontes_dados": [],
+            "fontes_dados": sorted(d["dominios"]),
+            "fontes_confiaveis": sorted(d["confiaveis"]),
             "fontes_urls": d["urls"],
-            "fontes_concordam": False,
+            "n_fontes": n_fontes,
+            "fontes_concordam": n_fontes >= 2,  # consenso multi-fonte
             "pilar": pilar,
         })
     state["jogos_pesquisados"] = momentos

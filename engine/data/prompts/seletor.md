@@ -23,8 +23,8 @@ Pense como um diretor de redação que conhece o público popular brasileiro a f
 Valide CADA momento contra a **`ancora_factual` DO PILAR ATIVO** (`pilar_config.ancora_factual`) ANTES de considerar. Toda entidade citada (seleção, participante, artista, data) tem que existir na âncora do pilar; se não existir → descarte.
 
 - **Pilar futebol:** os dois times estão em `selecoes_classificadas.json`? Se NÃO → descarte com motivo "time fora da Copa 2026" (provável erro de contexto: eliminatória/amistoso confundido com Copa). [Erro real já cometido: confundir jogo da Nigéria, que não está na Copa, com jogo da Copa.] E a data/fase batem (ver calendario_copa.json)? "Pênalti de mata-mata" na fase de grupos → erro de contexto, descarte.
-- **Outros pilares:** mesma regra — entidade fora da `ancora_factual` do pilar = descarte; confirme que o momento é da edição/período vigente (não temporada/ano antigo).
-- **A confiança vem das `fontes_pesquisa` do pilar (consenso multi-fonte).** Fato de fonte confiável e com acordo > snippet solto ambíguo. Snippet isolado sem confirmação → não confie.
+- **Outros pilares (cultura pop, música, datas) — ÂNCORA POR CONSENSO:** esses pilares NÃO têm lista fechada (influencers, músicas e affairs mudam toda semana — uma lista fixa envelheceria em dias). A âncora aqui é uma REGRA, não uma lista: **todo nome de pessoa/evento/música só é confiável se vier confirmado por MÚLTIPLAS fontes distintas da pesquisa Brave (consenso ≥2 fontes)** — nunca da sua memória. Cada momento recebido traz quantas fontes o confirmaram (`n_fontes`/`fontes_concordam`); o código já descarta os de fonte única antes de chegar a você. Você reforça: se um nome aparece só num snippet solto e ambíguo, NÃO use; prefira o que várias fontes contam igual. Confirme também que o momento é da edição/período VIGENTE (não temporada/ano antigo).
+- **Futebol pós-Copa:** quando a Copa acabar (19/jul/2026), a âncora vira `competicoes_clubes.json` (clubes reais de Brasileirão/Libertadores/Champions/Premier) no lugar das seleções — mesma regra de lista fixa, só troca o arquivo.
 
 Só passa pra seleção o que sobreviveu à validação factual.
 
@@ -52,6 +52,11 @@ Use o `criterio_de_casamento` de cada perfil (ponte_emocional.json) — ele desc
 - isolado/à margem, azarão, subestimado, "não era pra estar ali" → **ahsd**
 
 **Pilar futebol — use a FASE como pista** (calendario_copa.json → tipo_emocao_dominante): grupos favorece estreias/azarões (ahsd) e favoritos travando (ansiedade); mata-mata favorece pênaltis (ansiedade) e eliminação (trauma/superação); quartas/semis favorece peso de carregar um país (burnout). (Outros pilares: use `pilar_config.carga_emocional` no lugar da fase.)
+
+**Exemplos de casamento POR PILAR (o método é o mesmo — só muda a fonte do gancho):**
+- **Cultura pop / fofoca:** influencer cancelado/exposto → *"já te julgaram em público sem saber a sua história?"* (a dor do **julgamento público**, casa com trauma/ansiedade). BBB paredão/eliminação → **exclusão, medo de ser rejeitado, "sobrar"** (ahsd/trauma). Treta entre criadores → sensação de estar sempre se defendendo (ansiedade). Término de casal famoso → luto de vínculo (burnout/trauma). **Fale da emoção que o público PROJETA, nunca ataque a pessoa real** (ver `cuidado` do pilar).
+- **Música popular:** letra de término que viralizou → **saudade, superação, recomeço** (a letra já nomeia a dor — o gancho é a música, a virada é a mente). Música de autoestima que bombou → validação/merecimento (ahsd). Não reproduza a letra literal (direito autoral); use o TEMA.
+- **Datas sazonais:** **Natal → solidão** ("a mesa cheia e você se sentindo sozinho"); **Ano Novo → ansiedade de retrospectiva** ("a pressão de ter que ter conseguido tudo"); Dia das Mães/Pais → ausência/luto (trauma, CUIDADO). Acolher, nunca romantizar a dor.
 
 Regra transgeracional (turno tarde): momento histórico de DOR atravessa mais gerações que glória. Quanto mais antigo e marcante, mais transgeracional.
 

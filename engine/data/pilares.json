@@ -5,7 +5,7 @@
     "futebol": {
       "nome": "Futebol", "status": "ativo", "prioridade": 1,
       "descricao": "Copa 2026 até 19/jul; depois clubes (Brasileirão, Libertadores, Champions, Premier — CazéTV de graça, público pop presente).",
-      "ancora_factual": "selecoes_classificadas.json (Copa) / competicoes_clubes.json (pós-Copa, a criar)",
+      "ancora_factual": "selecoes_classificadas.json (Copa) / competicoes_clubes.json (pós-Copa, já criado) — lista fixa de entidades",
       "fontes_pesquisa": ["Brave: resultado + narrativa", "GE, ESPN, CNN, CazéTV"],
       "tipo_momento": "jogos do dia anterior (newsjacking) + históricos (transgeracional)",
       "carga_emocional": "derrota, virada, azarão, pressão, superação, choro, redenção",
@@ -14,7 +14,7 @@
     "cultura_pop": {
       "nome": "Cultura Pop / Fofoca", "status": "planejado", "prioridade": 2,
       "descricao": "Polêmicas de influencers, dramas de canais (Aqueles Caras, Peixinho), páginas de fofoca, BBB. Engajamento PARTICIPATIVO — pessoa tem opinião forte, quer comentar e compartilhar.",
-      "ancora_factual": "elenco/personagens do programa vigente (a criar por temporada)",
+      "ancora_factual": "CONSENSO MULTI-FONTE — sem lista fixa (influencers/BBB mudam toda semana); nome/evento só vale se ≥2 fontes distintas da Brave confirmam (pesquisa_pilar → n_fontes/fontes_concordam), nunca da memória do LLM",
       "fontes_pesquisa": ["Brave: polêmica + repercussão", "páginas de fofoca, YouTube drama"],
       "tipo_momento": "acontecimento do dia (paredão, briga, DR) + arco de personagem",
       "carga_emocional": "exclusão, julgamento público, ansiedade de pertencer, validação",
@@ -24,7 +24,7 @@
     "musica_popular": {
       "nome": "Música Popular", "status": "planejado", "prioridade": 3,
       "descricao": "Sertanejo, pagode, funk. As letras JÁ SÃO dor emocional nomeada. Lançamento viral = gancho instantâneo.",
-      "ancora_factual": "lançamentos/charts reais (validar por busca)",
+      "ancora_factual": "CONSENSO MULTI-FONTE — música/artista/lançamento só vale se ≥2 fontes distintas da Brave (charts/lançamentos) confirmam; sem lista fixa, validado por consenso na pesquisa",
       "fontes_pesquisa": ["Brave: lançamento", "Spotify Brasil, YouTube trending"],
       "tipo_momento": "lançamento viral + música que voltou a bombar",
       "carga_emocional": "término, saudade, superação, recomeço, autoestima",
@@ -34,7 +34,7 @@
     "datas_sazonais": {
       "nome": "Datas e Sazonais", "status": "planejado", "prioridade": 4,
       "descricao": "Natal, Ano Novo, Dia das Mães/Pais. Previsíveis, agendáveis, transgeracionais.",
-      "ancora_factual": "a própria data",
+      "ancora_factual": "a própria data (fixa/previsível) + CONSENSO MULTI-FONTE para o ângulo do ano; a data é certa, o gancho do momento vem confirmado pela pesquisa",
       "fontes_pesquisa": ["calendário fixo + Brave pro ângulo do ano"],
       "tipo_momento": "a data e a emoção não-dita dela",
       "carga_emocional": "Natal sozinho, ansiedade de retrospectiva, Dia das Mães com ausência, pressão de recomeço",
