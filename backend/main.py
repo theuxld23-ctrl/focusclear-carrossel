@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from backend.database import init_db
 from backend.scheduler import iniciar_scheduler, parar_scheduler
-from backend.routers import jobs, assets
+from backend.routers import jobs, assets, pilares, tendencias, personagem, integracoes
 
 
 @asynccontextmanager
@@ -21,6 +21,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="FocusClear Content Engine", version="0.1.0", lifespan=lifespan)
 app.include_router(jobs.router)
 app.include_router(assets.router)
+app.include_router(pilares.router)
+app.include_router(tendencias.router)
+app.include_router(personagem.router)
+app.include_router(integracoes.router)
 
 
 @app.get("/health")

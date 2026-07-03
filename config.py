@@ -18,6 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA = BASE_DIR / "engine" / "data"
 OUTPUT = BASE_DIR / "engine" / "output"
 OUTPUT.mkdir(parents=True, exist_ok=True)
+ASSETS = BASE_DIR / "engine" / "assets"  # uploads (ex.: foto de referência do personagem)
+ASSETS.mkdir(parents=True, exist_ok=True)
 
 # --- Chaves de serviços ---
 BRAVE_API_KEY = os.getenv("BRAVE_API_KEY", "")

@@ -15,6 +15,12 @@ const nextConfig = {
       { source: '/api/assets', destination: `${b}/assets/` },
       { source: '/api/assets/:id/image', destination: `${b}/assets/:id/image` },
       { source: '/api/assets/:id/status', destination: `${b}/assets/:id/status` },
+      { source: '/api/pilares', destination: `${b}/pilares/` },
+      { source: '/api/pilares/:id', destination: `${b}/pilares/:id` },
+      { source: '/api/tendencias', destination: `${b}/tendencias/` },
+      { source: '/api/personagem', destination: `${b}/personagem/` },
+      { source: '/api/personagem/foto', destination: `${b}/personagem/foto` },
+      { source: '/api/config', destination: `${b}/config/` },
       { source: '/api/health', destination: `${b}/health` },
     ]
   },

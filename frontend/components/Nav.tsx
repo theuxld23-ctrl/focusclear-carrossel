@@ -7,6 +7,11 @@ const tabs = [
   { href: '/criar', label: 'Criar' },
   { href: '/biblioteca', label: 'Biblioteca' },
   { href: '/fila', label: 'Fila' },
+  { href: '/tendencias', label: 'Tendências' },
+  { href: '/pilares', label: 'Pilares' },
+  { href: '/personagem', label: 'Personagem' },
+  { href: '/metricas', label: 'Métricas' },
+  { href: '/config', label: 'Config' },
 ]
 
 export default function Nav() {

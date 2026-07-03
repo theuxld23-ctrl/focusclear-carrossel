@@ -88,3 +88,89 @@ export function atualizarStatusAsset(id: string, status: AssetStatus) {
 export function imagemAssetUrl(id: string): string {
   return `${BASE}/assets/${id}/image`
 }
+
+// ── Pilares ──────────────────────────────────────────────────────────────
+export interface Pilar {
+  id: number
+  workspace_id: string
+  nome: string
+  status: string // ativo | planejado | desativado
+  config: Record<string, unknown>
+}
+
+export function listarPilares() {
+  return req<Pilar[]>('/pilares')
+}
+
+export function atualizarPilar(
+  id: number,
+  patch: { status?: string; config?: Record<string, unknown> },
+) {
+  return req<Pilar>(`/pilares/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  })
+}
+
+// ── Tendências ───────────────────────────────────────────────────────────
+export interface Tendencia {
+  id: number
+  workspace_id: string
+  pilar: string
+  termo: string
+  score: number
+  data: string
+}
+
+export function listarTendencias() {
+  return req<Tendencia[]>('/tendencias')
+}
+
+// ── Personagem ───────────────────────────────────────────────────────────
+export interface Personagem {
+  id: number
+  workspace_id: string
+  nome: string
+  descricao: string
+  tom_de_voz: string
+  foto_ref: string | null
+}
+
+export function getPersonagem() {
+  return req<Personagem>('/personagem')
+}
+
+export function salvarPersonagem(body: {
+  nome: string
+  descricao: string
+  tom_de_voz: string
+}) {
+  return req<Personagem>('/personagem', { method: 'PUT', body: JSON.stringify(body) })
+}
+
+export function fotoPersonagemUrl(bust?: number): string {
+  return `${BASE}/personagem/foto${bust ? `?t=${bust}` : ''}`
+}
+
+export async function uploadFotoPersonagem(file: File) {
+  const form = new FormData()
+  form.append('file', file)
+  // sem Content-Type manual: o browser define o boundary do multipart
+  const res = await fetch(`${BASE}/personagem/foto`, { method: 'POST', body: form })
+  if (!res.ok) throw new Error(`${res.status} — upload falhou`)
+  return res.json() as Promise<{ ok: boolean; foto_ref: string }>
+}
+
+// ── Integrações (.env, read-only) ────────────────────────────────────────
+export interface Integracao {
+  rotulo: string
+  chave: string
+  grupo: string
+  secreto: boolean
+  configurada: boolean
+  valor: string
+}
+
+export function listarIntegracoes() {
+  return req<{ integracoes: Integracao[] }>('/config')
+}

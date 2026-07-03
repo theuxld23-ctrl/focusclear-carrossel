@@ -6,3 +6,4 @@ engine/output/
 venv/
 focusclear.db
 *.db
+engine/assets/

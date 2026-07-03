@@ -85,10 +85,53 @@ class Agenda(Base):
     ativo = Column(Boolean, default=True)
 
 
+class Personagem(Base):
+    __tablename__ = "personagens"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    workspace_id = Column(String, nullable=False)
+    nome = Column(String, default="")
+    descricao = Column(Text, default="")
+    tom_de_voz = Column(Text, default="")
+    foto_ref = Column(String, nullable=True)  # path em engine/assets/
+    config = Column(JSON, default=dict)
+    atualizado_em = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+def _seed_pilares(db):
+    """Popula a tabela pilares a partir de engine/data/pilares.json (fonte de verdade).
+
+    Guarda o slug do pilar em config['chave'] (a tabela usa id autoincrement).
+    futebol=ativo; novela_reality/musica_popular/datas_sazonais=planejado.
+    """
+    import json
+    from config import DATA
+
+    if db.query(Pilar).filter_by(workspace_id="focusclear").first():
+        return
+    data = json.loads((DATA / "pilares.json").read_text(encoding="utf-8"))
+    for chave, p in data.get("pilares", {}).items():
+        db.add(Pilar(
+            workspace_id="focusclear",
+            nome=p.get("nome", chave),
+            status=p.get("status", "planejado"),
+            config={
+                "chave": chave,
+                "prioridade": p.get("prioridade"),
+                "descricao": p.get("descricao", ""),
+                "tipo_momento": p.get("tipo_momento", ""),
+                "carga_emocional": p.get("carga_emocional", ""),
+                "validade": p.get("validade", ""),
+                "cuidado": p.get("cuidado", ""),
+            },
+        ))
+    db.commit()
+
+
 def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     if not db.query(Workspace).filter_by(id="focusclear").first():
         db.add(Workspace(id="focusclear", nome="FocusClear"))
         db.commit()
+    _seed_pilares(db)
     db.close()

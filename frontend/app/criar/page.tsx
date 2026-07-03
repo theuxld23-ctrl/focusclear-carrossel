@@ -34,6 +34,16 @@ export default function CriarPage() {
   const [tracked, setTracked] = useState<Tracked | null>(null)
   const [tick, setTick] = useState(0) // força re-render do tempo decorrido
 
+  // Pré-preenche a partir de ?tema=&pilar= (ex.: "criar a partir disso" em /tendencias).
+  // Aditivo: só roda no mount e não muda nada quando não há query string.
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search)
+    const t = q.get('tema')
+    const p = q.get('pilar')
+    if (t) setTema(t)
+    if (p) setPilar(p)
+  }, [])
+
   // Polling do job a cada 2s até concluir ou dar erro.
   useEffect(() => {
     if (!tracked || isTerminal(tracked.status)) return
